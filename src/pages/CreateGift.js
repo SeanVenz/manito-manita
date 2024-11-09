@@ -43,7 +43,7 @@ function CreateGift() {
       </button>
       {linkUrl && (
         <p>
-          Here's Your Link: <a href={linkUrl} target="_blank" rel="noopener noreferrer">{linkUrl}</a>
+          Here's Your Link: <a href={linkUrl} rel="noopener noreferrer">{linkUrl}</a>
         </p>
       )}
     </div>
