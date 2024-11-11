@@ -1,9 +1,7 @@
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { db, storage } from "../firebase";
-import { addDoc, collection, doc, getDoc, runTransaction, updateDoc, writeBatch } from "firebase/firestore";
+import { addDoc, arrayRemove, collection, doc, getDoc, runTransaction, updateDoc, writeBatch } from "firebase/firestore";
 import { assignPairs } from "./utils";
-
-
 
 export const uploadImages = async (images, firstId, secondId, setUploadedImagesUrls) => {
     const urls = [];
@@ -16,7 +14,6 @@ export const uploadImages = async (images, firstId, secondId, setUploadedImagesU
     setUploadedImagesUrls(urls); // Update URLs in state
     return urls;
 };
-
 
 export const submitWishlist = async (firstId, secondId, wishList, images, setUploadedImagesUrls) => {
     try {
@@ -101,41 +98,61 @@ export const handleNameSelect = async (name, setError, linkId, setSelectedName, 
     const timestamp = new Date().toISOString();
 
     try {
-      // Run the transaction
-      await runTransaction(db, async (transaction) => {
-        const nameDoc = await transaction.get(nameDocRef);
-        
-        // Check if the document exists
-        if (!nameDoc.exists()) {
-          throw new Error("Name no longer exists");
-        }
+        // Run the transaction
+        await runTransaction(db, async (transaction) => {
+            const nameDoc = await transaction.get(nameDocRef);
 
-        const nameData = nameDoc.data();
-        
-        // Check if name is already taken
-        if (nameData.isTaken) {
-          throw new Error(`Sorry, "${name.name}" was just taken by someone else.`);
-        }
+            // Check if the document exists
+            if (!nameDoc.exists()) {
+                throw new Error("Name no longer exists");
+            }
 
-        // If we get here, the name is available, so let's claim it
-        transaction.update(nameDocRef, {
-          isTaken: true,
-          takenAt: timestamp,
+            const nameData = nameDoc.data();
+
+            // Check if name is already taken
+            if (nameData.isTaken) {
+                throw new Error(`Sorry, "${name.name}" was just taken by someone else.`);
+            }
+
+            // If we get here, the name is available, so let's claim it
+            transaction.update(nameDocRef, {
+                isTaken: true,
+                takenAt: timestamp,
+            });
         });
-      });
 
-      // If transaction succeeds, update local state
-      const nameData = {
-        name: name.name,
-        nameId: name.id,
-        timestamp: timestamp,
-      };
-      
-      setSelectedName(nameData);
-      localStorage.setItem(storageKey, JSON.stringify(nameData));
-      
+        // If transaction succeeds, update local state
+        const nameData = {
+            name: name.name,
+            nameId: name.id,
+            timestamp: timestamp,
+        };
+
+        setSelectedName(nameData);
+        localStorage.setItem(storageKey, JSON.stringify(nameData));
+
     } catch (err) {
-      console.error('Transaction failed:', err);
-      setError(err.message || "Failed to select name. Please try another one.");
+        console.error('Transaction failed:', err);
+        setError(err.message || "Failed to select name. Please try another one.");
     }
-  };
+};
+
+export const deleteImageFromFirebase = async (firstId, secondId, imageUrl) => {
+    try {
+        // 1. Create a reference to the image in Firebase Storage
+        const imageRef = ref(storage, imageUrl);
+
+        // 2. Delete the image from Storage
+        await deleteObject(imageRef);
+
+        // 3. Update the Firestore document to remove the image URL
+        const docRef = doc(db, 'wishlists', `${firstId}_${secondId}`);
+        await updateDoc(docRef, {
+            image: arrayRemove(imageUrl)
+        });
+
+    } catch (error) {
+        console.error('Error deleting image:', error);
+        throw error;
+    }
+};
