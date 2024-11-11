@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import useFetchLinkData from '../hooks/useFetchLinkData';
 import { db } from '../firebase';
-import { doc, getDoc, updateDoc, collection, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, collection, onSnapshot, runTransaction } from 'firebase/firestore';
 
 function GiftDetails() {
   const { linkId } = useParams();
@@ -10,17 +10,16 @@ function GiftDetails() {
   const navigate = useNavigate();
   const [selectedName, setSelectedName] = useState(null);
   const [names, setNames] = useState([]);
+  const [error, setError] = useState(null);
   const storageKey = `selected-name-${linkId}`;
 
   useEffect(() => {
-    // Check if user already selected a name
     const savedName = localStorage.getItem(storageKey);
     if (savedName) {
       setSelectedName(JSON.parse(savedName));
     }
   }, [storageKey]);
 
-  // Single real-time listener to handle all name updates
   useEffect(() => {
     const namesCollectionRef = collection(db, 'links', linkId, 'names');
     const unsubscribe = onSnapshot(namesCollectionRef, (snapshot) => {
@@ -51,32 +50,54 @@ function GiftDetails() {
   }
 
   const handleNameSelect = async (name) => {
-    const nameData = {
-      name: name.name,
-      nameId: name.id,
-      timestamp: new Date().toISOString(),
-    };
+    setError(null);
+    const nameDocRef = doc(db, 'links', linkId, 'names', name.id);
+    const timestamp = new Date().toISOString();
 
     try {
-      const nameDocRef = doc(db, 'links', linkId, 'names', name.id);
-      const docSnap = await getDoc(nameDocRef);
-      if (docSnap.exists()) {
-        await updateDoc(nameDocRef, { isTaken: true });
-      }
-    } catch (err) {
-      console.error('Error updating name:', err);
-      return; // Don't proceed if the update failed
-    }
+      // Run the transaction
+      await runTransaction(db, async (transaction) => {
+        const nameDoc = await transaction.get(nameDocRef);
+        
+        // Check if the document exists
+        if (!nameDoc.exists()) {
+          throw new Error("Name no longer exists");
+        }
 
-    setSelectedName(nameData);
-    localStorage.setItem(storageKey, JSON.stringify(nameData));
+        const nameData = nameDoc.data();
+        
+        // Check if name is already taken
+        if (nameData.isTaken) {
+          throw new Error(`Sorry, "${name.name}" was just taken by someone else.`);
+        }
+
+        // If we get here, the name is available, so let's claim it
+        transaction.update(nameDocRef, {
+          isTaken: true,
+          takenAt: timestamp,
+        });
+      });
+
+      // If transaction succeeds, update local state
+      const nameData = {
+        name: name.name,
+        nameId: name.id,
+        timestamp: timestamp,
+      };
+      
+      setSelectedName(nameData);
+      localStorage.setItem(storageKey, JSON.stringify(nameData));
+      
+    } catch (err) {
+      console.error('Transaction failed:', err);
+      setError(err.message || "Failed to select name. Please try another one.");
+    }
   };
 
   const viewWishList = (nameId) => {
     navigate(`${window.location.pathname}/${nameId}`);
   };
 
-  // Filter available names directly in the render
   const availableNames = names.filter(name => !name.isTaken);
 
   return (
@@ -86,6 +107,12 @@ function GiftDetails() {
           <h2 className="text-2xl font-bold text-center text-gray-900 mb-4">
             {selectedName ? 'Your Selected Nickname' : 'Choose Your Nickname!'}
           </h2>
+          
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-800 rounded-lg text-center">
+              {error}
+            </div>
+          )}
           
           {selectedName ? (
             <div className="space-y-4">
