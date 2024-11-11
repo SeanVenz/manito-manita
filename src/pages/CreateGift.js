@@ -8,13 +8,22 @@ function CreateGift() {
 
   const createLink = async () => {
     try {
-      const link = await addDoc(collection(db, "links"), {
-        member,  // Store the member value in Firestore
-      });
+      
 
       // Generate the link URL and set it in state
-      const generatedUrl = `${window.location.origin}/${link.id}`;
-      setLinkUrl(generatedUrl);
+      let generatedUrl = localStorage.getItem('generatedUrl');
+      if(generatedUrl){
+          setLinkUrl(generatedUrl);
+      }
+      else{
+        const link = await addDoc(collection(db, "links"), {
+          member,  // Store the member value in Firestore
+        });
+        generatedUrl = `${window.location.origin}/${link.id}`;
+        localStorage.setItem('generatedUrl', generatedUrl)
+        setLinkUrl(generatedUrl);
+      }
+      
 
     } catch (err) {
       console.log(err.message);
