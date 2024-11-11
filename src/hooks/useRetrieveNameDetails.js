@@ -1,42 +1,45 @@
 import { useEffect, useState } from 'react';
-import { collection, doc, getDoc, getDocs, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
 
-const useRetrieveWishList = () => {
+const useRetrieveNameDetails = (linkId) => {
   const [names, setNames] = useState([]);
   const [isValid, setIsValid] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
 
-  const urlParts = window.location.pathname.split('/');
-  const firstId = urlParts[urlParts.length - 2];
-
   useEffect(() => {
+    let unsubscribe;
+
     const fetchLinkData = async () => {
       setIsLoading(true);
       try {
-        const namesCollectionRef = collection(db, 'links', firstId, 'names');
-        const unsubscribe = onSnapshot(namesCollectionRef, (snapshot) => {
+        const namesCollectionRef = collection(db, 'links', linkId, 'names');
+        unsubscribe = onSnapshot(namesCollectionRef, (snapshot) => {
           const updatedNames = snapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
           }));
           setNames(updatedNames);
+          setIsLoading(false); 
         });
-
-        return () => unsubscribe();
-
       } catch (error) {
         console.error("Error fetching document:", error.message);
         setIsValid(false);
-      } finally {
         setIsLoading(false);
       }
     };
 
     fetchLinkData();
-  }, [firstId]);
+
+    // Cleanup function
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [linkId]);
 
   return { names, isValid, isLoading };
 };
 
-export default useRetrieveWishList;
+export default useRetrieveNameDetails;
