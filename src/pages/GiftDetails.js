@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import useFetchLinkData from '../hooks/useFetchLinkData';
+import { db } from '../firebase';
+import { doc, getDoc, updateDoc, collection, onSnapshot } from 'firebase/firestore';
 
 function GiftDetails() {
   const { linkId } = useParams();
-  const { linkData, names, isValid, isLoading } = useFetchLinkData(linkId);
+  const { linkData, isValid, isLoading } = useFetchLinkData(linkId);
   const navigate = useNavigate();
   const [selectedName, setSelectedName] = useState(null);
+  const [names, setNames] = useState([]);
   const storageKey = `selected-name-${linkId}`;
 
   useEffect(() => {
@@ -16,6 +19,20 @@ function GiftDetails() {
       setSelectedName(JSON.parse(savedName));
     }
   }, [storageKey]);
+
+  // Single real-time listener to handle all name updates
+  useEffect(() => {
+    const namesCollectionRef = collection(db, 'links', linkId, 'names');
+    const unsubscribe = onSnapshot(namesCollectionRef, (snapshot) => {
+      const updatedNames = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setNames(updatedNames);
+    });
+
+    return () => unsubscribe();
+  }, [linkId]);
 
   if (isLoading) {
     return (
@@ -33,19 +50,34 @@ function GiftDetails() {
     );
   }
 
-  const handleNameSelect = (name) => {
+  const handleNameSelect = async (name) => {
     const nameData = {
       name: name.name,
       nameId: name.id,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
+
+    try {
+      const nameDocRef = doc(db, 'links', linkId, 'names', name.id);
+      const docSnap = await getDoc(nameDocRef);
+      if (docSnap.exists()) {
+        await updateDoc(nameDocRef, { isTaken: true });
+      }
+    } catch (err) {
+      console.error('Error updating name:', err);
+      return; // Don't proceed if the update failed
+    }
+
     setSelectedName(nameData);
     localStorage.setItem(storageKey, JSON.stringify(nameData));
   };
 
   const viewWishList = (nameId) => {
-    navigate(`${window.location.pathname}${nameId}`);
+    navigate(`${window.location.pathname}/${nameId}`);
   };
+
+  // Filter available names directly in the render
+  const availableNames = names.filter(name => !name.isTaken);
 
   return (
     <div className="max-w-2xl mx-auto p-4">
@@ -77,11 +109,11 @@ function GiftDetails() {
               <p className="text-center text-gray-600 mb-4">
                 Once chosen, you cannot change your nickname.
               </p>
-              {names.length > 0 ? (
+              {availableNames.length > 0 ? (
                 <div className="grid grid-cols-2 gap-4">
-                  {names.map((name) => (
+                  {availableNames.map((name) => (
                     <button
-                      key={name.name}
+                      key={name.id}
                       onClick={() => handleNameSelect(name)}
                       className="p-4 text-lg border border-gray-200 rounded-lg hover:border-blue-500 
                                hover:text-blue-600 transition-all duration-200 focus:outline-none 

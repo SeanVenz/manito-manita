@@ -3,7 +3,7 @@ import useRetrieveWishList from '../hooks/useRetrieveWishList'
 
 function WishList() {
 
-    const { linkData, names, isValid, isLoading } = useRetrieveWishList();
+    const { names, isValid, isLoading } = useRetrieveWishList();
 
     return (
 
