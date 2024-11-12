@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { generateNames, handleMemberChange } from '../utils/utils';
 import { createLink, deleteLink } from '../utils/actions';
+import { Gift, Users } from 'lucide-react';
 
 function CreateGift() {
   const [linkUrl, setLinkUrl] = useState("");
@@ -9,52 +10,68 @@ function CreateGift() {
   const [isExisting, setIsExisting] = useState(false);
 
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Create a link for your family / friends manito manita!</h1>
-      <p className="mb-2">Input the number of people you want</p>
-      <input
-        type="number"
-        value={member}
-        onChange={(e) => handleMemberChange(e, setMember)}
-        placeholder="Enter member number"
-        required
-        min="1"
-        max="100"
-        className="border p-2 mb-4 w-full rounded"
-      />
-      {isExisting ? (
-        <>
-          <div>
-            <p className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded">
-              Oops, it seems like you have an existing Link: <a href={linkUrl} className="text-blue-600 hover:underline" rel="noopener noreferrer">{linkUrl}</a>
-              <br />Delete existing link and create new?
-            </p>
-            <button
-              className="bg-black text-white p-2 rounded w-full disabled:bg-gray-400"
-              onClick={() => deleteLink(linkUrl, member, setIsLoading, setIsExisting, generateNames, setLinkUrl)}
-              disabled={isLoading || !member}
-            >
-              {isLoading ? 'Creating...' : 'Delete and Create New'}
-            </button>
+    <div className="min-h-screen bg-[#FAF9F6] px-4 sm:px-6 md:px-8">
+      <div className="w-full max-w-3xl mx-auto py-8 sm:py-12 md:py-16"> 
+        <div className="mb-8 sm:mb-12 text-center">
+          <Gift className="w-12 h-12 sm:w-16 sm:h-16 text-[#D2042D] mx-auto mb-4 sm:mb-6" />
+          <h1 className="text-3xl sm:text-4xl font-bold mb-2 sm:mb-3 text-gray-800">Manito-Manita</h1>
+          <p className="text-base sm:text-lg text-gray-600">Create your family & friends gift exchange!</p>
+        </div>
+
+        <div className="bg-white p-6 sm:p-8 rounded-lg shadow-sm border border-gray-100">
+          <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+            <Users className="w-5 h-5 sm:w-6 sm:h-6 text-[#D2042D]" />
+            <p className="text-base sm:text-lg text-gray-700">Number of participants</p>
           </div>
-        </>
-      ) : (
-        <>
-          {linkUrl ? (
-            <p className="mt-4 p-4 bg-green-50 border border-green-200 rounded">
-              Here's Your Link: <a href={linkUrl} className="text-blue-600 hover:underline" rel="noopener noreferrer">{isLoading ? 'Creating...' : linkUrl}</a>
-            </p>
+          
+          <input
+            type="number"
+            value={member}
+            onChange={(e) => handleMemberChange(e, setMember)}
+            placeholder="Enter number of participants"
+            required
+            min="1"
+            max="100"
+            className="border border-gray-200 p-3 sm:p-4 mb-4 sm:mb-6 w-full rounded-md text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-[#D2042D] focus:border-transparent"
+          />
+
+          {isExisting ? (
+            <div>
+              <div className="mt-4 sm:mt-6 p-4 sm:p-6 bg-[#FFF5F5] border border-[#FECACA] rounded-md">
+                <p className="text-base sm:text-lg text-gray-700 break-words">
+                  Existing link found: <a href={linkUrl} className="text-[#D2042D] hover:underline" rel="noopener noreferrer">{linkUrl}</a>
+                </p>
+                <p className="text-sm sm:text-base text-gray-600 mt-2 sm:mt-3">Would you like to delete and create new?</p>
+              </div>
+              <button
+                className="mt-4 sm:mt-6 bg-[#D2042D] text-white p-3 sm:p-4 rounded-md w-full text-base sm:text-lg hover:bg-[#B00424] transition-colors disabled:bg-gray-300"
+                onClick={() => deleteLink(linkUrl, member, setIsLoading, setIsExisting, generateNames, setLinkUrl)}
+                disabled={isLoading || !member}
+              >
+                {isLoading ? 'Creating...' : 'Delete and Create New'}
+              </button>
+            </div>
           ) : (
-            <button
-              className="bg-black text-white p-2 rounded w-full disabled:bg-gray-400"
-              onClick={() => createLink(member, setIsLoading, setIsExisting, generateNames, setLinkUrl)}
-              disabled={isLoading || !member}
-            >
-              {isLoading ? 'Creating...' : 'Create'}
-            </button>
+            <>
+              {linkUrl ? (
+                <div className="mt-4 sm:mt-6 p-4 sm:p-6 bg-[#F0FDF4] border border-[#BBF7D0] rounded-md">
+                  <p className="text-base sm:text-lg text-gray-700 break-words">
+                    Your link is ready: <a href={linkUrl} className="text-[#D2042D] font-medium hover:underline" rel="noopener noreferrer">{isLoading ? 'Creating...' : linkUrl}</a>
+                  </p>
+                </div>
+              ) : (
+                <button
+                  className="bg-[#D2042D] text-white p-3 sm:p-4 rounded-md w-full text-base sm:text-lg hover:bg-[#B00424] transition-colors disabled:bg-gray-300"
+                  onClick={() => createLink(member, setIsLoading, setIsExisting, generateNames, setLinkUrl)}
+                  disabled={isLoading || !member}
+                >
+                  {isLoading ? 'Creating...' : 'Generate Secret Santa Links'}
+                </button>
+              )}
+            </>
           )}
-        </>
-      )}
+        </div>
+      </div>
     </div>
   );
 }

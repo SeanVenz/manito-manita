@@ -25,7 +25,6 @@ function AddWishlist() {
 
   const { manito, codeName, isValid, isLoading, image, refetch, storedWishList } = useGetManito(firstId, secondId);
 
-  // Set initial wishlist value when storedWishList is loaded
   useEffect(() => {
     if (storedWishList !== undefined) {
       setWishList(storedWishList);
@@ -51,92 +50,92 @@ function AddWishlist() {
   }
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
-      <button
-        onClick={viewWishLists}
-        className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 
-                  transition-colors duration-200 font-medium focus:outline-none 
-                  focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-      >
-        View Wishlists
-      </button>
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      {/* Form Container */}
+      <div className="bg-white shadow-md rounded-lg p-6 max-w-md w-full text-center">
+        {/* View Wishlists Button */}
+        <button 
+          onClick={viewWishLists} 
+          className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md mb-6 w-full transition duration-150"
+        >
+          View Wishlists
+        </button>
 
-      <h1 className="text-xl font-bold mb-4">Your codename is: {codeName}</h1>
-      <h2 className="text-lg font-semibold mb-2">Input your wishlist here:</h2>
-      <textarea
-        className="w-full p-2 mb-4 bg-black text-white caret-white rounded"
-        rows="4"
-        onChange={(e) => handleWishListChange(e, setWishList)}
-        value={wishList}
-      />
+        {/* Codename Section */}
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+          Your codename is: <span className="text-xl font-bold text-black">{codeName}</span>
+        </h2>
 
-      <h2 className="text-lg font-semibold mb-2">Upload your images:</h2>
-      <input
-        type="file"
-        multiple
-        accept="image/*"
-        onChange={(e) => handleImageChangeWishList(e, images, setImages, setImagePreviews)}
-        className="mb-4"
-      />
+        {/* Wishlist Input */}
+        <label htmlFor="wishlist" className="block text-gray-600 text-left mb-2">
+          Input your wishlist here:
+        </label>
+        <textarea
+          id="wishlist"
+          className="w-full h-28 p-3 border rounded-md border-gray-300 focus:outline-none focus:border-red-500 mb-4 resize-none"
+          placeholder="Type your wishlist here..."
+          onChange={(e) => handleWishListChange(e, setWishList)}
+          value={wishList}
+        />
 
-      {imagePreviews.length > 0 && (
-        <div className="mb-4">
-          <p className="font-semibold mb-2">Preview:</p>
-          <div className="flex flex-wrap gap-4">
-            {imagePreviews.map((preview, index) => (
-              <div key={index} className="relative">
-                <img
-                  src={preview}
-                  alt={`preview ${index}`}
-                  className="w-24 h-24 object-cover rounded"
-                />
-                <button
-                  onClick={() => removeImage(index, images, setImages, imagePreviews, setImagePreviews)}
-                  className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600"
-                >
-                  <X className="w-4 h-4 text-white" />
-                </button>
-              </div>
-            ))}
+        {/* File Upload Section */}
+        <label htmlFor="file-upload" className="block text-gray-600 text-left mb-2">
+          Upload your images:
+        </label>
+        <input
+          id="file-upload"
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={(e) => handleImageChangeWishList(e, images, setImages, setImagePreviews)}
+          className="block w-full text-sm text-gray-500
+            file:mr-4 file:py-2 file:px-4
+            file:rounded-md file:border-0
+            file:text-sm file:font-semibold
+            file:bg-red-600 file:text-white
+            hover:file:bg-red-700 mb-4 transition duration-150"
+        />
+
+        {imagePreviews.length > 0 && (
+          <div className="mb-3">
+            <p className="font-medium mb-2 text-gray-700">Preview:</p>
+            <div className="flex flex-wrap gap-3">
+              {imagePreviews.map((preview, index) => (
+                <div key={index} className="relative">
+                  <img
+                    src={preview}
+                    alt={`preview ${index}`}
+                    className="w-20 h-20 object-cover rounded"
+                  />
+                  <button
+                    onClick={() => removeImage(index, images, setImages, imagePreviews, setImagePreviews)}
+                    className="absolute -top-1 -right-1 bg-red-500 rounded-full p-1 hover:bg-red-600"
+                  >
+                    <X className="w-3 h-3 text-white" />
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <button
-        type="button"
-        disabled={isSubmitting}
-        className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
-        onClick={() => handleSubmitWishlist(setIsSubmitting, submitWishlist, firstId, secondId, wishList, images, setUploadedImagesUrls, setImages, setImagePreviews, refetch)}
-      >
-        {isSubmitting ? 'Submitting...' : 'Submit'}
-      </button>
+        {/* Submit Button */}
+        <button
+          type="button"
+          disabled={isSubmitting}
+          className={`bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-md w-full transition duration-150 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+          onClick={() => handleSubmitWishlist(setIsSubmitting, submitWishlist, firstId, secondId, wishList, images, setUploadedImagesUrls, setImages, setImagePreviews, refetch)}
+        >
+          {isSubmitting ? 'Submitting...' : 'Submit'}
+        </button>
 
-      <p className="mt-4">Your manito is: {manito}</p>
+        {/* Manito Section */}
+        <h2 className="text-lg font-semibold text-gray-800 mt-6">
+          Your manito is: <span className="text-xl font-bold text-black">{manito}</span>
+        </h2>
+      </div>
 
-      {image && image.length > 0 && (
-        <div className="mt-4">
-          <p className="font-semibold mb-2">Previously Uploaded Images:</p>
-          <div className="flex flex-wrap gap-4">
-            {image.map((url, index) => (
-              <div key={index} className="relative">
-                <img
-                  src={url}
-                  alt={`uploaded ${index}`}
-                  className="w-24 h-24 object-cover rounded"
-                />
-                <button
-                  onClick={() => handleRemoveImageInFirebase(url, setImageToDelete, setIsModalOpen)}
-                  className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600"
-                >
-                  <X className="w-4 h-4 text-white" />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
+      {/* Modal for Image Deletion */}
       {isModalOpen && (
         <ConfirmationModal
           setIsModalOpen={setIsModalOpen}

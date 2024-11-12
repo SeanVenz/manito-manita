@@ -26,7 +26,8 @@ function GiftDetails() {
 
   if (isLoading) {
     return (
-      <Loading />)
+      <Loading />
+    );
   }
 
   if (!isValid) {
@@ -36,8 +37,8 @@ function GiftDetails() {
   }
 
   const viewWishLists = () => {
-    navigate(`${window.location.pathname}/wishlist`)
-  }
+    navigate(`${window.location.pathname}/wishlist`);
+  };
 
   const viewOwnWishlist = (nameId) => {
     navigate(`${window.location.pathname}/${nameId}`);
@@ -46,18 +47,22 @@ function GiftDetails() {
   const availableNames = names.filter(name => !name.isTaken);
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
-      <button onClick={viewWishLists} className='mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 
-                           transition-colors duration-200 font-medium focus:outline-none 
-                           focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"'>View Wishlists</button>
+    <div className="px-4 py-8 mx-auto max-w-2xl w-full bg-off-white rounded-lg shadow-lg">
+      <div className="flex justify-center mb-6">
+        <button onClick={viewWishLists} className="px-6 py-3 bg-[#D2042D] text-white rounded-lg hover:bg-primary/80 
+                             transition-colors duration-200 font-medium focus:outline-none 
+                             focus:ring-2 focus:ring-primary focus:ring-offset-2">
+          View Wishlists
+        </button>
+      </div>
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="p-6">
-          <h2 className="text-2xl font-bold text-center text-gray-900 mb-4">
+        <div className="p-6 md:p-8">
+          <h2 className="text-2xl font-bold  text-center text-gray-900 mb-4">
             {selectedName ? 'Your Selected Nickname' : 'Choose Your Nickname!'}
           </h2>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-800 rounded-lg text-center">
+            <div className="mb-4 p-3 bg-red-500 border border-red-200 text-red-800 rounded-lg text-center">
               {error}
             </div>
           )}
@@ -66,14 +71,14 @@ function GiftDetails() {
             <div className="space-y-4">
               <div className="text-center">
                 <p className="text-lg text-gray-600 mb-2">Your nickname is:</p>
-                <p className="text-2xl font-bold text-blue-600">{selectedName.name}</p>
+                <p className="text-2xl font-bold text-primary">{selectedName.name}</p>
               </div>
               <div className="flex justify-center">
                 <button
                   onClick={() => viewOwnWishlist(selectedName.nameId)}
-                  className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 
+                  className="mt-4 px-6 py-3 bg-[#D2042D] text-white rounded-lg hover:bg-primary/80 
                            transition-colors duration-200 font-medium focus:outline-none 
-                           focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                           focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 >
                   Create Your Wishlist
                 </button>
@@ -85,14 +90,16 @@ function GiftDetails() {
                 Once chosen, you cannot change your nickname.
               </p>
               {availableNames.length > 0 ? (
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                   {availableNames.map((name) => (
                     <button
                       key={name.id}
                       onClick={() => handleNameSelect(name, setError, linkId, setSelectedName, storageKey)}
-                      className="p-4 text-lg border border-gray-200 rounded-lg hover:border-blue-500 
-                               hover:text-blue-600 transition-all duration-200 focus:outline-none 
-                               focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      className={`p-4 text-lg border rounded-lg transition-all duration-200 focus:outline-none 
+                        focus:ring-2 focus:ring-primary focus:ring-offset-2
+                        ${selectedName && selectedName.id === name.id 
+                          ? 'border-red-500 text-red-500' 
+                          : 'border-gray-200 hover:border-primary hover:text-primary'}`}
                     >
                       {name.name}
                     </button>
