@@ -42,7 +42,7 @@ function CreateGift() {
         <>
           {linkUrl ? (
             <p className="mt-4 p-4 bg-green-50 border border-green-200 rounded">
-              Here's Your Link: <a href={linkUrl} className="text-blue-600 hover:underline" rel="noopener noreferrer">{linkUrl}</a>
+              Here's Your Link: <a href={linkUrl} className="text-blue-600 hover:underline" rel="noopener noreferrer">{isLoading ? 'Creating...' : linkUrl}</a>
             </p>
           ) : (
             <button
