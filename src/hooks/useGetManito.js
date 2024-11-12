@@ -8,6 +8,7 @@ function useGetManito(firstId, secondId) {
   const [isValid, setIsValid] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [image, setImages] = useState([]);
+  const [storedWishList, setStoredWishList] = useState();
 
   const getManito = async () => {
     setIsLoading(true);
@@ -18,6 +19,7 @@ function useGetManito(firstId, secondId) {
         setManito(docSnap.data().manito);
         setCodeName(docSnap.data().name);
         setImages(docSnap.data()?.images || []);
+        setStoredWishList(docSnap.data()?.wishList || '');
         setIsLoading(false);
       } else {
         setIsLoading(false);
@@ -39,7 +41,7 @@ function useGetManito(firstId, secondId) {
     getManito();
   };
 
-  return { manito, codeName, isValid, isLoading, image, refetch };
+  return { manito, codeName, isValid, isLoading, image, refetch, storedWishList };
 }
 
 export default useGetManito;
