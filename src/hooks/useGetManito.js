@@ -22,6 +22,12 @@ function useGetManito(firstId, secondId) {
           setImages(docSnap.data()?.images || null);
           setIsLoading(false);
         }
+        else{
+          setIsLoading(false);
+          setIsValid(false);
+          console.log('here')
+          return;
+        }
       } catch (err) {
         console.log(err);
         setIsLoading(false);

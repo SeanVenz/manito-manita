@@ -25,8 +25,7 @@ function WishList() {
       {names.map((name) => (
         <div key={name.id} className="p-2 border rounded">
           <p><strong>{name.name}</strong></p>
-          <p>Manito: {name.manito}</p>
-          <p>WishList: {name.wishList || 'No wishlist provided'}</p>
+          <p>WishList: {name.wishList || 'No wishlist provided yet'}</p>
 
           {/* Display images from Firestore if they exist */}
           {name.images && name.images.length > 0 && (

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { collection, getDocs, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
 
 const useRetrieveNameDetails = (linkId) => {
@@ -14,6 +14,12 @@ const useRetrieveNameDetails = (linkId) => {
       setIsLoading(true);
       try {
         const namesCollectionRef = collection(db, 'links', linkId, 'names');
+        const docRef = await getDocs(namesCollectionRef);
+        if(docRef.empty){
+          setIsLoading(false);
+          setIsValid(false);
+          return;
+        }
         unsubscribe = onSnapshot(namesCollectionRef, (snapshot) => {
           const updatedNames = snapshot.docs.map((doc) => ({
             id: doc.id,
