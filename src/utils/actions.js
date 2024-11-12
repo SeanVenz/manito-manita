@@ -1,6 +1,6 @@
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { db, storage } from "../firebase";
-import { addDoc, arrayRemove, collection, doc, getDoc, runTransaction, updateDoc, writeBatch } from "firebase/firestore";
+import { addDoc, arrayRemove, collection, deleteDoc, doc, getDoc, getDocs, runTransaction, updateDoc, writeBatch } from "firebase/firestore";
 import { assignPairs } from "./utils";
 
 export const uploadImages = async (images, firstId, secondId, setUploadedImagesUrls) => {
@@ -46,6 +46,7 @@ export const createLink = async (member, setIsLoading, setIsExisting, generateNa
             setIsExisting(true);
         } else {
             // Create the main document
+            setIsExisting(false);
             const linkRef = await addDoc(collection(db, "links"), {
                 member: Number(member),
                 created: new Date().toISOString()
@@ -155,4 +156,37 @@ export const deleteImageFromFirebase = async (firstId, secondId, imageUrl) => {
         console.error('Error deleting image:', error);
         throw error;
     }
+};
+
+export const deleteLink = async (linkURL, member, setIsLoading, setIsExisting, generateNames, setLinkUrl) => {
+    try {
+        setIsLoading(true)
+        const urlParts = linkURL.split('/');
+        const linkId = urlParts[urlParts.length - 1];
+
+        const linkRef = doc(db, "links", linkId);
+
+        const linkDoc = await getDoc(linkRef);
+
+        if (linkDoc.exists()) {
+            localStorage.removeItem('generatedUrl');
+            // Specify the subcollection name
+            const subcollectionName = "names"; // replace with actual subcollection name
+            const subcollectionRef = collection(linkRef, subcollectionName);
+
+            // Get all documents in the subcollection
+            const subcollectionSnapshot = await getDocs(subcollectionRef);
+
+            // Delete each document in the subcollection
+            const deletePromises = subcollectionSnapshot.docs.map(doc => deleteDoc(doc.ref));
+            await Promise.all(deletePromises);
+
+            // Finally, delete the main document
+            await deleteDoc(linkRef);
+            console.log("Document and its subcollection deleted successfully");
+
+            createLink(member, setIsLoading, setIsExisting, generateNames, setLinkUrl);
+        }
+    }
+    catch (err) { console.log(err) }
 };

@@ -44,7 +44,7 @@ function AddWishlist() {
     return () => {
       imagePreviews.forEach(url => URL.revokeObjectURL(url));
     };
-  }, []);
+  }, [imagePreviews]);
 
   if (isLoading) {
     return <Loading />;

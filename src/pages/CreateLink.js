@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { generateNames, handleMemberChange } from '../utils/utils';
-import { createLink } from '../utils/actions';
+import { createLink, deleteLink } from '../utils/actions';
 
 function CreateGift() {
   const [linkUrl, setLinkUrl] = useState("");
@@ -22,23 +22,38 @@ function CreateGift() {
         max="100"
         className="border p-2 mb-4 w-full rounded"
       />
-      <button 
-        className="bg-black text-white p-2 rounded w-full disabled:bg-gray-400"
-        onClick={() => createLink(member, setIsLoading, setIsExisting, generateNames, setLinkUrl)}
-        disabled={isLoading || !member}
-      >
-        {isLoading ? 'Creating...' : 'Click me maniga'}
-      </button>
       {isExisting ? (
-        <p className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded">
-          You have an existing Link: <a href={linkUrl} className="text-blue-600 hover:underline" rel="noopener noreferrer">{linkUrl}</a>
-        </p>
+        <>
+          <div>
+            <p className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded">
+              Oops, it seems like you have an existing Link: <a href={linkUrl} className="text-blue-600 hover:underline" rel="noopener noreferrer">{linkUrl}</a>
+              <br />Delete existing link and create new?
+            </p>
+            <button
+              className="bg-black text-white p-2 rounded w-full disabled:bg-gray-400"
+              onClick={() => deleteLink(linkUrl, member, setIsLoading, setIsExisting, generateNames, setLinkUrl)}
+              disabled={isLoading || !member}
+            >
+              {isLoading ? 'Creating...' : 'Delete and Create New'}
+            </button>
+          </div>
+        </>
       ) : (
-        linkUrl && (
-          <p className="mt-4 p-4 bg-green-50 border border-green-200 rounded">
-            Here's Your Link: <a href={linkUrl} className="text-blue-600 hover:underline" rel="noopener noreferrer">{linkUrl}</a>
-          </p>
-        )
+        <>
+          {linkUrl ? (
+            <p className="mt-4 p-4 bg-green-50 border border-green-200 rounded">
+              Here's Your Link: <a href={linkUrl} className="text-blue-600 hover:underline" rel="noopener noreferrer">{linkUrl}</a>
+            </p>
+          ) : (
+            <button
+              className="bg-black text-white p-2 rounded w-full disabled:bg-gray-400"
+              onClick={() => createLink(member, setIsLoading, setIsExisting, generateNames, setLinkUrl)}
+              disabled={isLoading || !member}
+            >
+              {isLoading ? 'Creating...' : 'Create'}
+            </button>
+          )}
+        </>
       )}
     </div>
   );
