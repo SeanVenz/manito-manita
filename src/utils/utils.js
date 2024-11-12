@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker";
+import { submitWishlist } from "./actions";
 
 export const handleImageChange = (e, setImages) => {
     setImages(Array.from(e.target.files));
@@ -45,3 +46,47 @@ export const handleMemberChange = (e, setMember) => {
         setMember(value);
     }
 };
+
+export const handleWishListChange = (e, setWishList) => {
+    setWishList(e.target.value);
+};
+
+export const handleImageChangeWishList = (e, images, setImages, setImagePreviews) => {
+    const selectedFiles = Array.from(e.target.files);
+    const newImages = [...images, ...selectedFiles];
+    setImages(newImages);
+
+    const newPreviews = selectedFiles.map(file => URL.createObjectURL(file));
+    setImagePreviews(prev => [...prev, ...newPreviews]);
+};
+
+export const removeImage = (index, images, setImages, imagePreviews, setImagePreviews) => {
+    const newImages = images.filter((_, i) => i !== index);
+    setImages(newImages);
+
+    const previewUrl = imagePreviews[index];
+    URL.revokeObjectURL(previewUrl);
+    const newPreviews = imagePreviews.filter((_, i) => i !== index);
+    setImagePreviews(newPreviews);
+};
+
+export const handleSubmitWishlist = async (setIsSubmitting, submitWishlist, firstId, secondId, wishList, images, setUploadedImagesUrls, setImages, setImagePreviews, refetch) => {
+    try {
+        setIsSubmitting(true);
+        await submitWishlist(firstId, secondId, wishList, images, setUploadedImagesUrls);
+
+        setImages([]);
+        setImagePreviews([]);
+        await refetch();
+
+        setIsSubmitting(false);
+    } catch (error) {
+        console.error('Error submitting wishlist:', error);
+        setIsSubmitting(false);
+    }
+};
+
+export const handleRemoveImageInFirebase = (url, setImageToDelete, setIsModalOpen) => {
+    setImageToDelete(url);
+    setIsModalOpen(true);
+  };

@@ -190,3 +190,22 @@ export const deleteLink = async (linkURL, member, setIsLoading, setIsExisting, g
     }
     catch (err) { console.log(err) }
 };
+
+export const confirmDelete = async (imageToDelete, firstId, secondId, setIsModalOpen, setImageToDelete, refetch) => {
+    try {
+        const imageUrl = imageToDelete;
+        const imageRef = ref(storage, imageUrl);
+        await deleteObject(imageRef);
+
+        const docRef = doc(db, 'links', firstId, 'names', secondId);
+        await updateDoc(docRef, {
+            images: arrayRemove(imageUrl)
+        });
+
+        setIsModalOpen(false);
+        setImageToDelete(null);
+        refetch();
+    } catch (error) {
+        console.error('Error deleting image:', error);
+    }
+};

@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { submitWishlist } from '../utils/actions';
+import { confirmDelete, submitWishlist } from '../utils/actions';
 import useGetManito from '../hooks/useGetManito';
 import Loading from '../components/Loading';
 import Invalid from '../components/Invalid';
 import { X } from 'lucide-react';
-import { deleteObject, ref } from 'firebase/storage';
-import { db, storage } from '../firebase';
-import { arrayRemove, doc, updateDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
+import ConfirmationModal from '../components/ConfirmationModal';
+import { handleImageChangeWishList, handleRemoveImageInFirebase, handleSubmitWishlist, handleWishListChange, removeImage } from '../utils/utils';
 
 function AddWishlist() {
   const [wishList, setWishList] = useState('');
@@ -37,74 +36,11 @@ function AddWishlist() {
     navigate(`${thirdId}/${firstId}/wishlist`);
   };
 
-  const handleWishListChange = (e) => {
-    setWishList(e.target.value);
-  };
-
-  const handleImageChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    const newImages = [...images, ...selectedFiles];
-    setImages(newImages);
-
-    const newPreviews = selectedFiles.map(file => URL.createObjectURL(file));
-    setImagePreviews(prev => [...prev, ...newPreviews]);
-  };
-
-  const removeImage = (index) => {
-    const newImages = images.filter((_, i) => i !== index);
-    setImages(newImages);
-
-    const previewUrl = imagePreviews[index];
-    URL.revokeObjectURL(previewUrl);
-    const newPreviews = imagePreviews.filter((_, i) => i !== index);
-    setImagePreviews(newPreviews);
-  };
-
   useEffect(() => {
     return () => {
       imagePreviews.forEach(url => URL.revokeObjectURL(url));
     };
   }, [imagePreviews]);
-
-  const handleRemoveImageInFirebase = (url) => {
-    setImageToDelete(url);
-    setIsModalOpen(true);
-  };
-
-  const confirmDelete = async () => {
-    try {
-      const imageUrl = imageToDelete;
-      const imageRef = ref(storage, imageUrl);
-      await deleteObject(imageRef);
-
-      const docRef = doc(db, 'links', firstId, 'names', secondId);
-      await updateDoc(docRef, {
-        images: arrayRemove(imageUrl)
-      });
-
-      setIsModalOpen(false);
-      setImageToDelete(null);
-      refetch();
-    } catch (error) {
-      console.error('Error deleting image:', error);
-    }
-  };
-
-  const handleSubmitWishlist = async () => {
-    try {
-      setIsSubmitting(true);
-      await submitWishlist(firstId, secondId, wishList, images, setUploadedImagesUrls);
-
-      setImages([]);
-      setImagePreviews([]);
-      await refetch();
-
-      setIsSubmitting(false);
-    } catch (error) {
-      console.error('Error submitting wishlist:', error);
-      setIsSubmitting(false);
-    }
-  };
 
   if (isLoading) {
     return <Loading />;
@@ -116,21 +52,21 @@ function AddWishlist() {
 
   return (
     <div className="p-4 max-w-2xl mx-auto">
-      <button 
-        onClick={viewWishLists} 
+      <button
+        onClick={viewWishLists}
         className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 
                   transition-colors duration-200 font-medium focus:outline-none 
                   focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
         View Wishlists
       </button>
-      
+
       <h1 className="text-xl font-bold mb-4">Your codename is: {codeName}</h1>
       <h2 className="text-lg font-semibold mb-2">Input your wishlist here:</h2>
       <textarea
         className="w-full p-2 mb-4 bg-black text-white caret-white rounded"
         rows="4"
-        onChange={handleWishListChange}
+        onChange={(e) => handleWishListChange(e, setWishList)}
         value={wishList}
       />
 
@@ -139,7 +75,7 @@ function AddWishlist() {
         type="file"
         multiple
         accept="image/*"
-        onChange={handleImageChange}
+        onChange={(e) => handleImageChangeWishList(e, images, setImages, setImagePreviews)}
         className="mb-4"
       />
 
@@ -155,7 +91,7 @@ function AddWishlist() {
                   className="w-24 h-24 object-cover rounded"
                 />
                 <button
-                  onClick={() => removeImage(index)}
+                  onClick={() => removeImage(index, images, setImages, imagePreviews, setImagePreviews)}
                   className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600"
                 >
                   <X className="w-4 h-4 text-white" />
@@ -169,10 +105,9 @@ function AddWishlist() {
       <button
         type="button"
         disabled={isSubmitting}
-        className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${
-          isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-        }`}
-        onClick={handleSubmitWishlist}
+        className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+        onClick={() => handleSubmitWishlist(setIsSubmitting, submitWishlist, firstId, secondId, wishList, images, setUploadedImagesUrls, setImages, setImagePreviews, refetch)}
       >
         {isSubmitting ? 'Submitting...' : 'Submit'}
       </button>
@@ -191,7 +126,7 @@ function AddWishlist() {
                   className="w-24 h-24 object-cover rounded"
                 />
                 <button
-                  onClick={() => handleRemoveImageInFirebase(url)}
+                  onClick={() => handleRemoveImageInFirebase(url, setImageToDelete, setIsModalOpen)}
                   className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600"
                 >
                   <X className="w-4 h-4 text-white" />
@@ -203,28 +138,10 @@ function AddWishlist() {
       )}
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
-            <h3 className="text-lg font-semibold mb-4">Delete Image</h3>
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to delete this image? This action cannot be undone.
-            </p>
-            <div className="flex justify-end gap-4">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
+        <ConfirmationModal
+          setIsModalOpen={setIsModalOpen}
+          confirmDelete={() => confirmDelete(imageToDelete, firstId, secondId, setIsModalOpen, setImageToDelete, refetch)}
+        />
       )}
     </div>
   );
