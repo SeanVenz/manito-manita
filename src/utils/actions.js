@@ -11,23 +11,37 @@ export const uploadImages = async (images, firstId, secondId, setUploadedImagesU
         const downloadURL = await getDownloadURL(imageRef);
         urls.push(downloadURL);
     }
-    setUploadedImagesUrls(urls); // Update URLs in state
+    setUploadedImagesUrls(urls);
     return urls;
 };
 
 export const submitWishlist = async (firstId, secondId, wishList, images, setUploadedImagesUrls) => {
     try {
-        const imageUrls = await uploadImages(images, firstId, secondId, setUploadedImagesUrls); // Upload images first
         const namesDocRef = doc(db, 'links', firstId, 'names', secondId);
-
+        
+        // Get the current document to check for existing images
         const docSnap = await getDoc(namesDocRef);
+        
+        // Upload new images
+        const newImageUrls = await uploadImages(images, firstId, secondId, setUploadedImagesUrls);
+        
         if (docSnap.exists()) {
-            await updateDoc(namesDocRef, { wishList, images: imageUrls });
+            // Get existing images array or empty array if none exist
+            const existingImages = docSnap.data().images || [];
+            
+            // Combine existing images with new images
+            const combinedImageUrls = [...existingImages, ...newImageUrls];
+            
+            // Update document with combined images
+            await updateDoc(namesDocRef, { 
+                wishList, 
+                images: combinedImageUrls 
+            });
         } else {
             console.log('Document does not exist');
         }
     } catch (error) {
-        console.error('Error fetching document:', error.message);
+        console.error('Error updating document:', error.message);
     } finally {
         console.log('done');
     }

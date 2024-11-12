@@ -1,5 +1,4 @@
 import { faker } from "@faker-js/faker";
-import { submitWishlist } from "./actions";
 
 export const handleImageChange = (e, setImages) => {
     setImages(Array.from(e.target.files));
