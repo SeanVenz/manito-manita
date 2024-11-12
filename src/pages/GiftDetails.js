@@ -15,7 +15,7 @@ function GiftDetails() {
   const urlParts = window.location.pathname.split('/');
   const firstId = urlParts[urlParts.length - 1];
 
-  const {names, isValid, isLoading} = useRetrieveWishList(firstId);
+  const { names, isValid, isLoading } = useRetrieveWishList(firstId);
 
   useEffect(() => {
     const savedName = localStorage.getItem(storageKey);
@@ -35,7 +35,11 @@ function GiftDetails() {
     );
   }
 
-  const viewWishList = (nameId) => {
+  const viewWishLists = () => {
+    navigate(`${window.location.pathname}/wishlist`)
+  }
+
+  const viewOwnWishlist = (nameId) => {
     navigate(`${window.location.pathname}/${nameId}`);
   };
 
@@ -43,6 +47,9 @@ function GiftDetails() {
 
   return (
     <div className="max-w-2xl mx-auto p-4">
+      <button onClick={viewWishLists} className='mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 
+                           transition-colors duration-200 font-medium focus:outline-none 
+                           focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"'>View Wishlists</button>
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         <div className="p-6">
           <h2 className="text-2xl font-bold text-center text-gray-900 mb-4">
@@ -63,7 +70,7 @@ function GiftDetails() {
               </div>
               <div className="flex justify-center">
                 <button
-                  onClick={() => viewWishList(selectedName.nameId)}
+                  onClick={() => viewOwnWishlist(selectedName.nameId)}
                   className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 
                            transition-colors duration-200 font-medium focus:outline-none 
                            focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"

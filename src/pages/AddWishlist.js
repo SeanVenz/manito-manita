@@ -7,6 +7,7 @@ import { X } from 'lucide-react';
 import { deleteObject, ref } from 'firebase/storage';
 import { db, storage } from '../firebase';
 import { arrayRemove, doc, updateDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
 
 function AddWishlist() {
   const [wishList, setWishList] = useState('');
@@ -18,10 +19,17 @@ function AddWishlist() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const urlParts = window.location.pathname.split('/');
-  const firstId = urlParts[urlParts.length - 2];
+
   const secondId = urlParts[urlParts.length - 1];
+  const firstId = urlParts[urlParts.length - 2];
+  const thirdId = urlParts[urlParts.length - 3];
+  const navigate = useNavigate();
 
   const { manito, codeName, isValid, isLoading, image, refetch } = useGetManito(firstId, secondId);
+
+  const viewWishLists = () => {
+    navigate(`${thirdId}/${firstId}/wishlist`)
+  }
 
   const handleImageChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
@@ -60,11 +68,11 @@ function AddWishlist() {
   const confirmDelete = async () => {
     try {
       const imageUrl = imageToDelete;
-      
+
       // 1. Delete from Storage
       const imageRef = ref(storage, imageUrl);
       await deleteObject(imageRef);
-      
+
       // 2. Update Firestore
       const docRef = doc(db, 'links', firstId, 'names', secondId);
       await updateDoc(docRef, {
@@ -74,7 +82,7 @@ function AddWishlist() {
       // 3. Close modal and reset state
       setIsModalOpen(false);
       setImageToDelete(null);
-      
+
       // 4. Refetch the data to update UI
       refetch();
     } catch (error) {
@@ -86,15 +94,15 @@ function AddWishlist() {
     try {
       setIsSubmitting(true);
       await submitWishlist(firstId, secondId, wishList, images, setUploadedImagesUrls);
-      
+
       // Clear form
       setWishList('');
       setImages([]);
       setImagePreviews([]);
-      
+
       // Refresh the data to show new images
       await refetch();
-      
+
       setIsSubmitting(false);
     } catch (error) {
       console.error('Error submitting wishlist:', error);
@@ -112,6 +120,9 @@ function AddWishlist() {
 
   return (
     <div className="p-4 max-w-2xl mx-auto">
+      <button onClick={viewWishLists} className='mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 
+                           transition-colors duration-200 font-medium focus:outline-none 
+                           focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"'>View Wishlists</button>
       <h1 className="text-xl font-bold mb-4">Your codename is: {codeName}</h1>
       <h2 className="text-lg font-semibold mb-2">Input your wishlist here:</h2>
       <textarea
@@ -120,7 +131,7 @@ function AddWishlist() {
         onChange={(e) => setWishList(e.target.value)}
         value={wishList}
       />
-      
+
       <h2 className="text-lg font-semibold mb-2">Upload your images:</h2>
       <input
         type="file"
@@ -157,9 +168,8 @@ function AddWishlist() {
       <button
         type="button"
         disabled={isSubmitting}
-        className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${
-          isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-        }`}
+        className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
         onClick={handleSubmitWishlist}
       >
         {isSubmitting ? 'Submitting...' : 'Submit'}
