@@ -54,8 +54,8 @@ function AddWishlist() {
       {/* Form Container */}
       <div className="bg-white shadow-md rounded-lg p-6 max-w-md w-full text-center">
         {/* View Wishlists Button */}
-        <button 
-          onClick={viewWishLists} 
+        <button
+          onClick={viewWishLists}
           className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md mb-6 w-full transition duration-150"
         >
           View Wishlists
@@ -133,6 +133,28 @@ function AddWishlist() {
         <h2 className="text-lg font-semibold text-gray-800 mt-6">
           Your manito is: <span className="text-xl font-bold text-black">{manito}</span>
         </h2>
+        {image && image.length > 0 && (
+          <div className="mt-4">
+            <p className="font-semibold mb-2">Previously Uploaded Images:</p>
+            <div className="flex flex-wrap gap-4">
+              {image.map((url, index) => (
+                <div key={index} className="relative">
+                  <img
+                    src={url}
+                    alt={`uploaded ${index}`}
+                    className="w-24 h-24 object-cover rounded"
+                  />
+                  <button
+                    onClick={() => handleRemoveImageInFirebase(url, setImageToDelete, setIsModalOpen)}
+                    className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600"
+                  >
+                    <X className="w-4 h-4 text-white" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Modal for Image Deletion */}

@@ -1,4 +1,4 @@
-import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { deleteObject, getDownloadURL, getStorage, listAll, ref, uploadBytes } from "firebase/storage";
 import { db, storage } from "../firebase";
 import { addDoc, arrayRemove, collection, deleteDoc, doc, getDoc, getDocs, runTransaction, updateDoc, writeBatch } from "firebase/firestore";
 import { assignPairs } from "./utils";
@@ -107,11 +107,11 @@ export const createLink = async (member, setIsLoading, setIsExisting, generateNa
     }
 };
 
-export const handleNameSelect = async (name, setError, linkId, setSelectedName, storageKey) => {
+export const handleNameSelect = async (name, setError, linkId, setSelectedName, storageKey, setIsPickingName) => {
     setError(null);
+    setIsPickingName(true);
     const nameDocRef = doc(db, 'links', linkId, 'names', name.id);
     const timestamp = new Date().toISOString();
-
     try {
         // Run the transaction
         await runTransaction(db, async (transaction) => {
@@ -150,6 +150,10 @@ export const handleNameSelect = async (name, setError, linkId, setSelectedName, 
         console.error('Transaction failed:', err);
         setError(err.message || "Failed to select name. Please try another one.");
     }
+    finally{
+        //needs to run all the time in case there is error, user can choose another nickname
+        setIsPickingName(false);
+    }
 };
 
 export const deleteImageFromFirebase = async (firstId, secondId, imageUrl) => {
@@ -174,35 +178,67 @@ export const deleteImageFromFirebase = async (firstId, secondId, imageUrl) => {
 
 export const deleteLink = async (linkURL, member, setIsLoading, setIsExisting, generateNames, setLinkUrl) => {
     try {
-        setIsLoading(true)
+        setIsLoading(true);
         const urlParts = linkURL.split('/');
         const linkId = urlParts[urlParts.length - 1];
-
         const linkRef = doc(db, "links", linkId);
-
         const linkDoc = await getDoc(linkRef);
 
         if (linkDoc.exists()) {
             localStorage.removeItem('generatedUrl');
-            // Specify the subcollection name
-            const subcollectionName = "names"; // replace with actual subcollection name
-            const subcollectionRef = collection(linkRef, subcollectionName);
-
-            // Get all documents in the subcollection
+            
+            // Delete subcollection documents
+            const subcollectionRef = collection(linkRef, "names");
             const subcollectionSnapshot = await getDocs(subcollectionRef);
-
-            // Delete each document in the subcollection
             const deletePromises = subcollectionSnapshot.docs.map(doc => deleteDoc(doc.ref));
             await Promise.all(deletePromises);
 
+            // Delete storage files
+            const storage = getStorage();
+            const firstId = linkId; // Using linkId as firstId
+
+            try {
+                // Reference the root folder for this firstId
+                const firstLevelRef = ref(storage, `images/${firstId}`);
+                
+                // List all contents recursively
+                const result = await listAll(firstLevelRef);
+                
+                // Delete all files found
+                const deletePromises = [];
+                
+                // Process all items (files) at this level
+                result.items.forEach((itemRef) => {
+                    deletePromises.push(deleteObject(itemRef));
+                });
+                
+                // Process all prefixes (folders)
+                for (const prefix of result.prefixes) {
+                    const subResult = await listAll(prefix);
+                    subResult.items.forEach((itemRef) => {
+                        deletePromises.push(deleteObject(itemRef));
+                    });
+                }
+                
+                // Wait for all deletions to complete
+                await Promise.all(deletePromises);
+                
+                console.log("All storage files deleted successfully");
+            } catch (storageError) {
+                console.error("Storage deletion error:", storageError);
+                // Continue with document deletion even if storage deletion fails
+            }
+
             // Finally, delete the main document
             await deleteDoc(linkRef);
-            console.log("Document and its subcollection deleted successfully");
+            console.log("Document and subcollections deleted successfully");
 
             createLink(member, setIsLoading, setIsExisting, generateNames, setLinkUrl);
         }
+    } catch (err) {
+        console.error("Error in deleteLink:", err);
+        setIsLoading(false);
     }
-    catch (err) { console.log(err) }
 };
 
 export const confirmDelete = async (imageToDelete, firstId, secondId, setIsModalOpen, setImageToDelete, refetch) => {
@@ -223,3 +259,7 @@ export const confirmDelete = async (imageToDelete, firstId, secondId, setIsModal
         console.error('Error deleting image:', error);
     }
 };
+
+export const handleDeleteImagesWhenLinkIsRemoved = async () => {
+
+}

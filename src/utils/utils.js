@@ -88,4 +88,14 @@ export const handleSubmitWishlist = async (setIsSubmitting, submitWishlist, firs
 export const handleRemoveImageInFirebase = (url, setImageToDelete, setIsModalOpen) => {
     setImageToDelete(url);
     setIsModalOpen(true);
-  };
+};
+
+export const handleCopy = (copy) => {
+    if (copy) {
+        navigator.clipboard.writeText(copy).then(() => {
+            alert("Successfully copied link!");
+        }).catch(err => {
+            console.error("Failed to copy mnemonic: ", err);
+        });
+    }
+};

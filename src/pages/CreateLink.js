@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { generateNames, handleMemberChange } from '../utils/utils';
+import { generateNames, handleCopy, handleMemberChange } from '../utils/utils';
 import { createLink, deleteLink } from '../utils/actions';
 import { Gift, Users } from 'lucide-react';
 
@@ -11,7 +11,7 @@ function CreateGift() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F6] px-4 sm:px-6 md:px-8">
-      <div className="w-full max-w-3xl mx-auto py-8 sm:py-12 md:py-16"> 
+      <div className="w-full max-w-3xl mx-auto py-8 sm:py-12 md:py-16">
         <div className="mb-8 sm:mb-12 text-center">
           <Gift className="w-12 h-12 sm:w-16 sm:h-16 text-[#D2042D] mx-auto mb-4 sm:mb-6" />
           <h1 className="text-3xl sm:text-4xl font-bold mb-2 sm:mb-3 text-gray-800">Manito-Manita</h1>
@@ -23,7 +23,7 @@ function CreateGift() {
             <Users className="w-5 h-5 sm:w-6 sm:h-6 text-[#D2042D]" />
             <p className="text-base sm:text-lg text-gray-700">Number of participants</p>
           </div>
-          
+
           <input
             type="number"
             value={member}
@@ -40,6 +40,15 @@ function CreateGift() {
               <div className="mt-4 sm:mt-6 p-4 sm:p-6 bg-[#FFF5F5] border border-[#FECACA] rounded-md">
                 <p className="text-base sm:text-lg text-gray-700 break-words">
                   Existing link found: <a href={linkUrl} className="text-[#D2042D] hover:underline" rel="noopener noreferrer">{linkUrl}</a>
+                  <div className="flex flex-row items-center justify-center gap-2 mt-4">
+                    <button
+                      onClick={() => handleCopy(linkUrl)}
+                      className="flex items-center justify-center font-medium bg-dark-quad text-black py-1 px-3 rounded hover:bg-dark-fifth transition duration-300"
+                    >
+                      <i className="bi bi-clipboard text-black"></i>
+                      Copy Phrase
+                    </button>
+                  </div>
                 </p>
                 <p className="text-sm sm:text-base text-gray-600 mt-2 sm:mt-3">Would you like to delete and create new?</p>
               </div>
@@ -58,6 +67,15 @@ function CreateGift() {
                   <p className="text-base sm:text-lg text-gray-700 break-words">
                     Your link is ready: <a href={linkUrl} className="text-[#D2042D] font-medium hover:underline" rel="noopener noreferrer">{isLoading ? 'Creating...' : linkUrl}</a>
                   </p>
+                  <div className="flex flex-row items-center justify-center gap-2 mt-4">
+                    <button
+                      onClick={() => handleCopy(linkUrl)}
+                      className="flex items-center justify-center font-medium bg-dark-quad text-black py-1 px-3 rounded hover:bg-dark-fifth transition duration-300"
+                    >
+                      <i className="bi bi-clipboard text-black"></i>
+                      Copy Phrase
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <button

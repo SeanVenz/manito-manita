@@ -11,6 +11,7 @@ function GiftDetails() {
   const [selectedName, setSelectedName] = useState(null);
   const [error, setError] = useState(null);
   const storageKey = `selected-name-${linkId}`;
+  const[isPickingName, setIsPickingName] = useState(false);
 
   const urlParts = window.location.pathname.split('/');
   const firstId = urlParts[urlParts.length - 1];
@@ -62,7 +63,7 @@ function GiftDetails() {
           </h2>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-500 border border-red-200 text-red-800 rounded-lg text-center">
+            <div className="mb-4 p-3 bg-red-500 border border-red-200 text-white rounded-lg text-center">
               {error}
             </div>
           )}
@@ -94,12 +95,13 @@ function GiftDetails() {
                   {availableNames.map((name) => (
                     <button
                       key={name.id}
-                      onClick={() => handleNameSelect(name, setError, linkId, setSelectedName, storageKey)}
+                      onClick={() => handleNameSelect(name, setError, linkId, setSelectedName, storageKey, setIsPickingName)}
                       className={`p-4 text-lg border rounded-lg transition-all duration-200 focus:outline-none 
                         focus:ring-2 focus:ring-primary focus:ring-offset-2
                         ${selectedName && selectedName.id === name.id 
                           ? 'border-red-500 text-red-500' 
                           : 'border-gray-200 hover:border-primary hover:text-primary'}`}
+                      disabled={isPickingName}
                     >
                       {name.name}
                     </button>
