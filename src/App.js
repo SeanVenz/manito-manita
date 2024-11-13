@@ -4,6 +4,7 @@ import CreateGift from './pages/CreateLink';
 import GiftDetails from './pages/GiftDetails';
 import AddWishlist from './pages/AddWishlist';
 import WishList from './pages/WishList';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
@@ -16,6 +17,10 @@ function App() {
           <Route path="/:linkId/wishlist" element={<WishList />} />
         </Routes>
       </main>
+      <ToastContainer
+        position="bottom-right"
+        theme="dark"
+      />
     </Router>
   );
 }

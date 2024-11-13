@@ -2,6 +2,7 @@ import { deleteObject, getDownloadURL, getStorage, listAll, ref, uploadBytes } f
 import { db, storage } from "../firebase";
 import { addDoc, arrayRemove, collection, deleteDoc, doc, getDoc, getDocs, runTransaction, updateDoc, writeBatch } from "firebase/firestore";
 import { assignPairs } from "./utils";
+import { toast } from "react-toastify";
 
 export const uploadImages = async (images, firstId, secondId, setUploadedImagesUrls) => {
     const urls = [];
@@ -140,6 +141,7 @@ export const handleNameSelect = async (name, setError, linkId, setSelectedName, 
 
         setSelectedName(nameData);
         localStorage.setItem(storageKey, JSON.stringify(nameData));
+        toast.success("Successfully chose a nickname!");
 
     } catch (err) {
         console.error('Transaction failed:', err);
@@ -252,7 +254,3 @@ export const confirmDelete = async (imageToDelete, firstId, secondId, setIsModal
         console.error('Error deleting image:', error);
     }
 };
-
-export const handleDeleteImagesWhenLinkIsRemoved = async () => {
-
-}

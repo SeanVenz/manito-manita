@@ -16,6 +16,7 @@ function AddWishlist() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [imageToDelete, setImageToDelete] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   const urlParts = window.location.pathname.split('/');
   const secondId = urlParts[urlParts.length - 1];
@@ -78,6 +79,12 @@ function AddWishlist() {
           value={wishList}
         />
 
+        {error && (
+          <div className="mb-4 p-3 borde text-red-500 rounded-lg text-center">
+            {error}
+          </div>
+        )}
+
         {/* File Upload Section */}
         <label htmlFor="file-upload" className="block text-gray-600 text-left mb-2">
           Upload your images:
@@ -124,7 +131,7 @@ function AddWishlist() {
           type="button"
           disabled={isSubmitting}
           className={`bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-md w-full transition duration-150 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
-          onClick={() => handleSubmitWishlist(setIsSubmitting, submitWishlist, firstId, secondId, wishList, images, setUploadedImagesUrls, setImages, setImagePreviews, refetch)}
+          onClick={() => handleSubmitWishlist(setIsSubmitting, submitWishlist, firstId, secondId, wishList, images, setUploadedImagesUrls, setImages, setImagePreviews, refetch, setError)}
         >
           {isSubmitting ? 'Submitting...' : 'Submit'}
         </button>

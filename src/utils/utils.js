@@ -1,4 +1,6 @@
 import { faker } from "@faker-js/faker";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const handleImageChange = (e, setImages) => {
     setImages(Array.from(e.target.files));
@@ -69,8 +71,13 @@ export const removeImage = (index, images, setImages, imagePreviews, setImagePre
     setImagePreviews(newPreviews);
 };
 
-export const handleSubmitWishlist = async (setIsSubmitting, submitWishlist, firstId, secondId, wishList, images, setUploadedImagesUrls, setImages, setImagePreviews, refetch) => {
+export const handleSubmitWishlist = async (setIsSubmitting, submitWishlist, firstId, secondId, wishList, images, setUploadedImagesUrls, setImages, setImagePreviews, refetch, setError) => {
     try {
+        if(wishList === ''){
+            setError("Your Wishlist cannot be Empty");
+            return;
+        }
+        setError('');
         setIsSubmitting(true);
         await submitWishlist(firstId, secondId, wishList, images, setUploadedImagesUrls);
 
@@ -79,6 +86,7 @@ export const handleSubmitWishlist = async (setIsSubmitting, submitWishlist, firs
         await refetch();
 
         setIsSubmitting(false);
+        toast.success('Successfully Submitted Wishlist')
     } catch (error) {
         console.error('Error submitting wishlist:', error);
         setIsSubmitting(false);
@@ -93,7 +101,7 @@ export const handleRemoveImageInFirebase = (url, setImageToDelete, setIsModalOpe
 export const handleCopy = (copy) => {
     if (copy) {
         navigator.clipboard.writeText(copy).then(() => {
-            alert("Successfully copied link!");
+            toast.success("Successfully copied link!");
         }).catch(err => {
             console.error("Failed to copy mnemonic: ", err);
         });
