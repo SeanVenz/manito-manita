@@ -250,6 +250,7 @@ export const confirmDelete = async (imageToDelete, firstId, secondId, setIsModal
         setIsModalOpen(false);
         setImageToDelete(null);
         refetch();
+        toast.success("Image successfully deleted")
     } catch (error) {
         console.error('Error deleting image:', error);
     }
