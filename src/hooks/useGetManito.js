@@ -27,7 +27,6 @@ function useGetManito(firstId, secondId) {
         return;
       }
     } catch (err) {
-      console.log(err);
       setIsLoading(false);
       setIsValid(false);
     }

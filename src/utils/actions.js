@@ -38,12 +38,10 @@ export const submitWishlist = async (firstId, secondId, wishList, images, setUpl
                 images: combinedImageUrls 
             });
         } else {
-            console.log('Document does not exist');
         }
     } catch (error) {
         console.error('Error updating document:', error.message);
     } finally {
-        console.log('done');
     }
 };
 
@@ -71,11 +69,9 @@ export const createLink = async (member, setIsLoading, setIsExisting, generateNa
 
             // Generate names
             const names = generateNames(Number(member));
-            console.log('Generated names:', names); // Debug log
 
             // Assign pairs
             const pairs = assignPairs(names);
-            console.log('Generated pairs:', pairs); // Debug log
 
             // Use a batch write to ensure all documents are created
             const batch = writeBatch(db);
@@ -93,7 +89,6 @@ export const createLink = async (member, setIsLoading, setIsExisting, generateNa
 
             // Commit the batch
             await batch.commit();
-            console.log('Batch write completed'); // Debug log
 
             localStorage.setItem('generatedUrl', generatedUrl);
         }
@@ -223,7 +218,6 @@ export const deleteLink = async (linkURL, member, setIsLoading, setIsExisting, g
                 // Wait for all deletions to complete
                 await Promise.all(deletePromises);
                 
-                console.log("All storage files deleted successfully");
             } catch (storageError) {
                 console.error("Storage deletion error:", storageError);
                 // Continue with document deletion even if storage deletion fails
@@ -231,7 +225,6 @@ export const deleteLink = async (linkURL, member, setIsLoading, setIsExisting, g
 
             // Finally, delete the main document
             await deleteDoc(linkRef);
-            console.log("Document and subcollections deleted successfully");
 
             createLink(member, setIsLoading, setIsExisting, generateNames, setLinkUrl);
         }
