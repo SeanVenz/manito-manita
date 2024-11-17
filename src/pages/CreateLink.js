@@ -8,9 +8,10 @@ function CreateGift() {
   const [member, setMember] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isExisting, setIsExisting] = useState(false);
+  const [error, setError] = useState("");
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6] px-4 sm:px-6 md:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-red-50 to-white px-4 sm:px-6 md:px-8">
       <div className="w-full max-w-3xl mx-auto py-8 sm:py-12 md:py-16">
         <div className="mb-8 sm:mb-12 text-center">
           <Gift className="w-12 h-12 sm:w-16 sm:h-16 text-[#D2042D] mx-auto mb-4 sm:mb-6" />
@@ -40,22 +41,21 @@ function CreateGift() {
               <div className="mt-4 sm:mt-6 p-4 sm:p-6 bg-[#FFF5F5] border border-[#FECACA] rounded-md">
                 <p className="text-base sm:text-lg text-gray-700 break-words">
                   Existing link found: <a href={linkUrl} className="text-[#D2042D] hover:underline" rel="noopener noreferrer">{linkUrl}</a>
-                  <div className="flex flex-row items-center justify-center gap-2 mt-4">
-                    <button
-                      onClick={() => handleCopy(linkUrl)}
-                      className="flex items-center justify-center font-medium bg-dark-quad text-black py-1 px-3 rounded hover:bg-dark-fifth transition duration-300"
-                    >
-                      <i className="bi bi-clipboard text-black"></i>
-                      Copy Phrase
-                    </button>
-                  </div>
                 </p>
-                <p className="text-sm sm:text-base text-gray-600 mt-2 sm:mt-3">Would you like to delete and create new?</p>
-                <p className="text-sm sm:text-base text-gray-600 mt-2 sm:mt-3">You can only create up to 3 links per day</p>
+                <div className="flex flex-row items-center justify-center gap-2 mt-4">
+                  <button
+                    onClick={() => handleCopy(linkUrl)}
+                    className="flex items-center justify-center font-medium bg-dark-quad text-black py-1 px-3 rounded hover:bg-dark-fifth transition duration-300"
+                  >
+                    <i className="bi bi-clipboard text-black"></i>
+                    Copy Link
+                  </button>
+                </div>
+                <p className="text-sm sm:text-base text-gray-600 mt-2 sm:mt-3">Would you like to delete and create new? You can only create up to 3 links per day</p>
               </div>
               <button
                 className="mt-4 sm:mt-6 bg-[#D2042D] text-white p-3 sm:p-4 rounded-md w-full text-base sm:text-lg hover:bg-[#B00424] transition-colors disabled:bg-gray-300"
-                onClick={() => deleteLink(linkUrl, member, setIsLoading, setIsExisting, generateNames, setLinkUrl)}
+                onClick={() => deleteLink(linkUrl, member, setIsLoading, setIsExisting, generateNames, setLinkUrl, setError)}
                 disabled={isLoading || !member}
               >
                 {isLoading ? 'Creating...' : 'Delete and Create New'}
@@ -74,20 +74,25 @@ function CreateGift() {
                       className="flex items-center justify-center font-medium bg-dark-quad text-black py-1 px-3 rounded hover:bg-dark-fifth transition duration-300"
                     >
                       <i className="bi bi-clipboard text-black"></i>
-                      Copy Phrase
+                      Copy Link
                     </button>
                   </div>
                 </div>
               ) : (
                 <button
                   className="bg-[#D2042D] text-white p-3 sm:p-4 rounded-md w-full text-base sm:text-lg hover:bg-[#B00424] transition-colors disabled:bg-gray-300"
-                  onClick={() => createLink(member, setIsLoading, setIsExisting, generateNames, setLinkUrl)}
+                  onClick={() => createLink(member, setIsLoading, setIsExisting, generateNames, setLinkUrl, setError)}
                   disabled={isLoading || !member}
                 >
                   {isLoading ? 'Creating...' : 'Generate Secret Santa Links'}
                 </button>
               )}
             </>
+          )}
+          {error && (
+            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-red-600 text-center">{error}</p>
+            </div>
           )}
         </div>
       </div>

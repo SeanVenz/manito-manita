@@ -19,24 +19,24 @@ export const uploadImages = async (images, firstId, secondId, setUploadedImagesU
 export const submitWishlist = async (firstId, secondId, wishList, images, setUploadedImagesUrls) => {
     try {
         const namesDocRef = doc(db, 'links', firstId, 'names', secondId);
-        
+
         // Get the current document to check for existing images
         const docSnap = await getDoc(namesDocRef);
-        
+
         // Upload new images
         const newImageUrls = await uploadImages(images, firstId, secondId, setUploadedImagesUrls);
-        
+
         if (docSnap.exists()) {
             // Get existing images array or empty array if none exist
             const existingImages = docSnap.data().images || [];
-            
+
             // Combine existing images with new images
             const combinedImageUrls = [...existingImages, ...newImageUrls];
-            
+
             // Update document with combined images
-            await updateDoc(namesDocRef, { 
-                wishList, 
-                images: combinedImageUrls 
+            await updateDoc(namesDocRef, {
+                wishList,
+                images: combinedImageUrls
             });
         } else {
         }
@@ -46,11 +46,53 @@ export const submitWishlist = async (firstId, secondId, wishList, images, setUpl
     }
 };
 
-export const createLink = async (member, setIsLoading, setIsExisting, generateNames, setLinkUrl) => {
+export const createLink = async (member, setIsLoading, setIsExisting, generateNames, setLinkUrl, setError) => {
     if (!member) return;
     setIsLoading(true);
+    setError(''); // Clear any existing errors
 
     try {
+        // Check creation limits
+        const times = localStorage.getItem('times');
+        const dateCreated = localStorage.getItem('createdAt');
+
+        if (times) {
+            let increment = parseInt(JSON.parse(times));
+            
+            if (increment >= 5) {
+                // If we've reached the limit, check if a day has passed
+                if (dateCreated) {
+                    const lastCreationDate = new Date(dateCreated);
+                    const currentDate = new Date();
+                    const timeDifference = currentDate - lastCreationDate;
+                    const oneDay = 24 * 60 * 60 * 1000;
+                    console.log(timeDifference<oneDay)
+                    console.log(timeDifference);
+
+                    if (timeDifference < oneDay) {
+                        setIsLoading(false);
+                        setError('You can only create 3 links per day. Please try again tomorrow.');
+                        return;
+                    } else {
+                        // Reset counter if a day has passed
+                        localStorage.setItem('times', 1);
+                        localStorage.setItem('createdAt', new Date().toISOString());
+                    }
+                }
+            } else {
+                // Increment counter if under limit
+                increment += 1;
+                localStorage.setItem('times', increment);
+                if (increment === 1) {
+                    localStorage.setItem('createdAt', new Date().toISOString());
+                }
+            }
+        } else {
+            // First time creating a link
+            localStorage.setItem('times', '1');
+            localStorage.setItem('createdAt', new Date().toISOString());
+        }
+
         let linkId;
         let generatedUrl = localStorage.getItem('generatedUrl');
 
@@ -92,21 +134,12 @@ export const createLink = async (member, setIsLoading, setIsExisting, generateNa
             await batch.commit();
 
             localStorage.setItem('generatedUrl', generatedUrl);
-            // localStorage.setItem('createdAt', new Date().toISOString());
-            const dateCreated = localStorage.getItem('createdAt')
-
-            const dateToday = new Date(dateCreated);
-            const dateYesterday = new Date('2024-11-12T12:08:48.234Z')
-            const timeDifference = dateToday - dateYesterday;
-            const oneDay = 24 * 60 * 60 * 1000;
-            console.log(timeDifference);
-            console.log(timeDifference >= oneDay);
         }
-
         setLinkUrl(generatedUrl);
 
     } catch (err) {
         console.error("Error creating link:", err);
+        setError('An error occurred while creating the link. Please try again.');
     } finally {
         setIsLoading(false);
     }
@@ -156,7 +189,7 @@ export const handleNameSelect = async (name, setError, linkId, setSelectedName, 
         console.error('Transaction failed:', err);
         setError(err.message || "Failed to select name. Please try another one.");
     }
-    finally{
+    finally {
         //needs to run all the time in case there is error, user can choose another nickname
         setIsPickingName(false);
     }
@@ -182,7 +215,7 @@ export const deleteImageFromFirebase = async (firstId, secondId, imageUrl) => {
     }
 };
 
-export const deleteLink = async (linkURL, member, setIsLoading, setIsExisting, generateNames, setLinkUrl) => {
+export const deleteLink = async (linkURL, member, setIsLoading, setIsExisting, generateNames, setLinkUrl, setError) => {
     try {
         setIsLoading(true);
         const urlParts = linkURL.split('/');
@@ -192,7 +225,7 @@ export const deleteLink = async (linkURL, member, setIsLoading, setIsExisting, g
 
         if (linkDoc.exists()) {
             localStorage.removeItem('generatedUrl');
-            
+
             // Delete subcollection documents
             const subcollectionRef = collection(linkRef, "names");
             const subcollectionSnapshot = await getDocs(subcollectionRef);
@@ -206,18 +239,18 @@ export const deleteLink = async (linkURL, member, setIsLoading, setIsExisting, g
             try {
                 // Reference the root folder for this firstId
                 const firstLevelRef = ref(storage, `images/${firstId}`);
-                
+
                 // List all contents recursively
                 const result = await listAll(firstLevelRef);
-                
+
                 // Delete all files found
                 const deletePromises = [];
-                
+
                 // Process all items (files) at this level
                 result.items.forEach((itemRef) => {
                     deletePromises.push(deleteObject(itemRef));
                 });
-                
+
                 // Process all prefixes (folders)
                 for (const prefix of result.prefixes) {
                     const subResult = await listAll(prefix);
@@ -225,10 +258,10 @@ export const deleteLink = async (linkURL, member, setIsLoading, setIsExisting, g
                         deletePromises.push(deleteObject(itemRef));
                     });
                 }
-                
+
                 // Wait for all deletions to complete
                 await Promise.all(deletePromises);
-                
+
             } catch (storageError) {
                 console.error("Storage deletion error:", storageError);
                 // Continue with document deletion even if storage deletion fails
@@ -237,7 +270,7 @@ export const deleteLink = async (linkURL, member, setIsLoading, setIsExisting, g
             // Finally, delete the main document
             await deleteDoc(linkRef);
 
-            createLink(member, setIsLoading, setIsExisting, generateNames, setLinkUrl);
+            createLink(member, setIsLoading, setIsExisting, generateNames, setLinkUrl, setError);
         }
     } catch (err) {
         console.error("Error in deleteLink:", err);

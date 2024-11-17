@@ -51,7 +51,7 @@ function AddWishlist() {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-red-50 to-white">
       {/* Form Container */}
       <div className="bg-white shadow-md rounded-lg p-6 max-w-md w-full text-center">
         {/* View Wishlists Button */}
