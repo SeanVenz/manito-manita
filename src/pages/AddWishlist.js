@@ -50,8 +50,6 @@ function AddWishlist() {
     return <Invalid />;
   }
 
-  
-
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       {/* Form Container */}
@@ -144,7 +142,7 @@ function AddWishlist() {
         </h2>
         {image && image.length > 0 && (
           <div className="mt-4">
-            <p className="font-semibold mb-2">Previously Uploaded Images:</p>
+            <p className="font-semibold mb-2">Your Uploaded Images:</p>
             <div className="flex flex-wrap gap-4">
               {image.map((url, index) => (
                 <div key={index} className="relative">

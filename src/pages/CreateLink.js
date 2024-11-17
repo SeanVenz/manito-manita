@@ -51,6 +51,7 @@ function CreateGift() {
                   </div>
                 </p>
                 <p className="text-sm sm:text-base text-gray-600 mt-2 sm:mt-3">Would you like to delete and create new?</p>
+                <p className="text-sm sm:text-base text-gray-600 mt-2 sm:mt-3">You can only create up to 3 links per day</p>
               </div>
               <button
                 className="mt-4 sm:mt-6 bg-[#D2042D] text-white p-3 sm:p-4 rounded-md w-full text-base sm:text-lg hover:bg-[#B00424] transition-colors disabled:bg-gray-300"

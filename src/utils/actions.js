@@ -92,6 +92,15 @@ export const createLink = async (member, setIsLoading, setIsExisting, generateNa
             await batch.commit();
 
             localStorage.setItem('generatedUrl', generatedUrl);
+            // localStorage.setItem('createdAt', new Date().toISOString());
+            const dateCreated = localStorage.getItem('createdAt')
+
+            const dateToday = new Date(dateCreated);
+            const dateYesterday = new Date('2024-11-12T12:08:48.234Z')
+            const timeDifference = dateToday - dateYesterday;
+            const oneDay = 24 * 60 * 60 * 1000;
+            console.log(timeDifference);
+            console.log(timeDifference >= oneDay);
         }
 
         setLinkUrl(generatedUrl);
