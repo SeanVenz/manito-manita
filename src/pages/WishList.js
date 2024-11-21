@@ -43,7 +43,7 @@ function WishList() {
               Everyone's Wishlist
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
-              Explore gift ideas and wishes from your loved ones. Make this holiday season special!
+              View the wishlist of your manito here. Make this holiday season special!
             </p>
             
             {/* Search Bar */}

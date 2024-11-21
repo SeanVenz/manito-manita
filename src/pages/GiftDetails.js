@@ -81,6 +81,7 @@ function GiftDetails() {
                 Create Your Wishlist
                 <ChevronRight className="w-4 h-4" />
               </button>
+              <p className="text-base mb-0 mt-4 text-red-500 text-center">P.S. You can join lots of Manito-Manita as long as you have the right link!</p>
             </div>
           ) : (
             // Name Selection View
