@@ -96,7 +96,7 @@ function AddWishlist() {
           type="file"
           multiple
           accept="image/*"
-          onChange={(e) => handleImageChangeWishList(e, images, setImages, setImagePreviews)} 
+          onChange={(e) => handleImageChangeWishList(e, images, setImages, setImagePreviews)}
           className="block w-full text-sm text-gray-500
             file:mr-4 file:py-2 file:px-4
             file:rounded-md file:border-0
