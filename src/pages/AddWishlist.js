@@ -3,7 +3,7 @@ import { confirmDelete, submitWishlist } from '../utils/actions';
 import useGetManito from '../hooks/useGetManito';
 import Loading from '../components/Loading';
 import Invalid from '../components/Invalid';
-import { X } from 'lucide-react';
+import { X, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { handleImageChangeWishList, handleRemoveImageInFirebase, handleSubmitWishlist, handleWishListChange, removeImage } from '../utils/utils';
@@ -17,6 +17,8 @@ function AddWishlist() {
   const [imageToDelete, setImageToDelete] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [ismanitoVisible, setIsmanitoVisible] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const urlParts = window.location.pathname.split('/');
   const secondId = urlParts[urlParts.length - 1];
@@ -137,8 +139,21 @@ function AddWishlist() {
         </button>
 
         {/* Manito Section */}
-        <h2 className="text-lg font-semibold text-gray-800 mt-6">
-          Your manito is: <span className="text-xl font-bold text-black">{manito}</span>
+        <h2 className="text-lg font-semibold text-gray-800 mt-6 flex items-center justify-center gap-2">
+          Your manito is:
+          {ismanitoVisible ? (
+            <span className="text-xl font-bold text-black">{manito}</span>
+          ) : (
+            <span className="text-xl font-bold text-black">********</span>
+          )}
+          <button
+            onMouseDown={() => setIsmanitoVisible(true)}
+            onMouseUp={() => setIsmanitoVisible(false)}
+            onMouseLeave={() => setIsmanitoVisible(false)}
+            className="focus:outline-none"
+          >
+            {ismanitoVisible ? <EyeOff className="w-5 h-5 text-gray-500" /> : <Eye className="w-5 h-5 text-gray-500" />}
+          </button>
         </h2>
         {image && image.length > 0 && (
           <div className="mt-4">
@@ -168,7 +183,8 @@ function AddWishlist() {
       {isModalOpen && (
         <ConfirmationModal
           setIsModalOpen={setIsModalOpen}
-          confirmDelete={() => confirmDelete(imageToDelete, firstId, secondId, setIsModalOpen, setImageToDelete, refetch)}
+          confirmDelete={() => confirmDelete(imageToDelete, firstId, secondId, setIsModalOpen, setImageToDelete, refetch, setIsDeleting)}
+          isDeleting={isDeleting}
         />
       )}
     </div>

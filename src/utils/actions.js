@@ -278,8 +278,9 @@ export const deleteLink = async (linkURL, member, setIsLoading, setIsExisting, g
     }
 };
 
-export const confirmDelete = async (imageToDelete, firstId, secondId, setIsModalOpen, setImageToDelete, refetch) => {
+export const confirmDelete = async (imageToDelete, firstId, secondId, setIsModalOpen, setImageToDelete, refetch, setIsDeleting) => {
     try {
+        setIsDeleting(true);
         const imageUrl = imageToDelete;
         const imageRef = ref(storage, imageUrl);
         await deleteObject(imageRef);
@@ -293,7 +294,9 @@ export const confirmDelete = async (imageToDelete, firstId, secondId, setIsModal
         setImageToDelete(null);
         refetch();
         toast.success("Image successfully deleted")
+        setIsDeleting(false);
     } catch (error) {
+        setIsDeleting(false);
         console.error('Error deleting image:', error);
     }
 };
