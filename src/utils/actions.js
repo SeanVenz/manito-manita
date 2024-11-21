@@ -66,8 +66,6 @@ export const createLink = async (member, setIsLoading, setIsExisting, generateNa
                     const currentDate = new Date();
                     const timeDifference = currentDate - lastCreationDate;
                     const oneDay = 24 * 60 * 60 * 1000;
-                    console.log(timeDifference<oneDay)
-                    console.log(timeDifference);
 
                     if (timeDifference < oneDay) {
                         setIsLoading(false);
