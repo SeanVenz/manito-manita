@@ -30,10 +30,10 @@ function WishListDetailModal({ setIsModalOpen, name }) {
 
                 {/* Header - adjusted padding for mobile */}
                 <div className="p-4 sm:p-6">
-                    <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2 sm:mb-4 text-center pr-8">
+                    <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2 sm:mb-4 text-center">
                         {name.name}
                     </h3>
-                    <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 text-center">
+                    <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 text-center break-all">
                         Wish List: {name.wishList || 'No wishlist provided yet'}
                     </p>
                 </div>

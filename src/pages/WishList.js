@@ -77,14 +77,14 @@ function WishList() {
               <div
                 key={name.id}
                 onClick={() => handleSelectedName(name)}
-                className="group bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 
+                className="group bg-white flex flex-col justify-between rounded-xl shadow-sm hover:shadow-md transition-all duration-300 
                           overflow-hidden cursor-pointer border border-gray-100"
               >
                 {/* Card Header */}
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="text-xl font-semibold text-gray-900 mb-1">
+                      <h3 className="text-xl font-semibold text-gray-900 mb-1 text-center">
                         {name.name}
                       </h3>
                       {name.images && name.images.length > 0 && (
