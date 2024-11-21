@@ -33,7 +33,7 @@ function WishListDetailModal({ setIsModalOpen, name }) {
                     <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2 sm:mb-4 text-center">
                         {name.name}
                     </h3>
-                    <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 text-center break-all">
+                    <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 text-center whitespace-normal break-words">
                         Wish List: {name.wishList || 'No wishlist provided yet'}
                     </p>
                 </div>
