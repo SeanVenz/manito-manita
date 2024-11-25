@@ -52,6 +52,10 @@ function AddWishlist() {
     return <Invalid />;
   }
 
+  const handleManitoVisibility  = () => {
+    ismanitoVisible ? setIsmanitoVisible(false) : setIsmanitoVisible(true);
+  }
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-red-50 to-white">
       {/* Form Container */}
@@ -142,14 +146,12 @@ function AddWishlist() {
         <h2 className="text-lg font-semibold text-gray-800 mt-6 flex items-center justify-center gap-2">
           Your manito is:
           {ismanitoVisible ? (
-            <span className="text-xl font-bold text-black">{manito}</span>
+            <span onClick={() => handleManitoVisibility()} className="text-xl font-bold text-black">{manito}</span>
           ) : (
-            <span className="text-xl font-bold text-black">********</span>
+            <span onClick={() => handleManitoVisibility()} className="text-xl font-bold text-black">********</span>
           )}
           <button
-            onMouseDown={() => setIsmanitoVisible(true)}
-            onMouseUp={() => setIsmanitoVisible(false)}
-            // onMouseLeave={() => setIsmanitoVisible(false)}
+            onClick={() => handleManitoVisibility()}
             className="focus:outline-none"
           >
             {ismanitoVisible ? <EyeOff className="w-5 h-5 text-gray-500" /> : <Eye className="w-5 h-5 text-gray-500" />}
