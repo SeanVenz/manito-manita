@@ -71,7 +71,7 @@ function AddWishlist() {
 
         {/* Wishlist Input */}
         <label htmlFor="wishlist" className="block text-gray-600 text-left mb-2">
-          Input your wishlist here:
+          Input your wishlist separated by comma (,) here:
         </label>
         <textarea
           id="wishlist"
