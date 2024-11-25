@@ -149,7 +149,7 @@ function AddWishlist() {
           <button
             onMouseDown={() => setIsmanitoVisible(true)}
             onMouseUp={() => setIsmanitoVisible(false)}
-            onMouseLeave={() => setIsmanitoVisible(false)}
+            // onMouseLeave={() => setIsmanitoVisible(false)}
             className="focus:outline-none"
           >
             {ismanitoVisible ? <EyeOff className="w-5 h-5 text-gray-500" /> : <Eye className="w-5 h-5 text-gray-500" />}
