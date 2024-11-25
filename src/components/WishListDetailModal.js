@@ -42,7 +42,7 @@ function WishListDetailModal({ setIsModalOpen, name }) {
                     <div className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
                         <p className="font-medium mb-2 text-center">Wish List:</p>
                         {getWishListItems().length > 0 ? (
-                            <div className="grid grid-cols-2 gap-x-8 gap-y-1 max-w-2xl mx-auto px-4">
+                            <div className="grid grid-cols-1 gap-x-8 gap-y-1 max-w-2xl mx-auto px-4">
                                 {getWishListItems().map((item, index) => (
                                     <div key={index} className="flex items-start">
                                         <span className="text-gray-400 mr-2">•</span>
