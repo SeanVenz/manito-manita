@@ -16,6 +16,12 @@ function WishListDetailModal({ setIsModalOpen, name }) {
         );
     };
 
+    // Function to convert comma-separated string to array and clean up items
+    const getWishListItems = () => {
+        if (!name.wishList) return [];
+        return name.wishList.split(',').map(item => item.trim()).filter(item => item);
+    };
+
     return (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="relative w-full max-w-3xl bg-white rounded-xl shadow-2xl overflow-hidden">
@@ -33,9 +39,21 @@ function WishListDetailModal({ setIsModalOpen, name }) {
                     <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2 sm:mb-4 text-center">
                         {name.name}
                     </h3>
-                    <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 text-center whitespace-normal break-words">
-                        Wish List: {name.wishList || 'No wishlist provided yet'}
-                    </p>
+                    <div className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
+                        <p className="font-medium mb-2 text-center">Wish List:</p>
+                        {getWishListItems().length > 0 ? (
+                            <div className="grid grid-cols-2 gap-x-8 gap-y-1 max-w-2xl mx-auto px-4">
+                                {getWishListItems().map((item, index) => (
+                                    <div key={index} className="flex items-start">
+                                        <span className="text-gray-400 mr-2">•</span>
+                                        <span className="whitespace-normal break-all">{item}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-center">No wishlist provided yet</p>
+                        )}
+                    </div>
                 </div>
 
                 {/* Carousel */}
