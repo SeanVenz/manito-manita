@@ -5,13 +5,13 @@ function WishListDetailModal({ setIsModalOpen, name }) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const goToNextSlide = () => {
-        setCurrentImageIndex((prevIndex) => 
+        setCurrentImageIndex((prevIndex) =>
             prevIndex === (name.images?.length - 1) ? 0 : prevIndex + 1
         );
     };
 
     const goToPrevSlide = () => {
-        setCurrentImageIndex((prevIndex) => 
+        setCurrentImageIndex((prevIndex) =>
             prevIndex === 0 ? (name.images?.length - 1) : prevIndex - 1
         );
     };
@@ -42,11 +42,11 @@ function WishListDetailModal({ setIsModalOpen, name }) {
                     <div className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
                         <p className="font-medium mb-2 text-center">Wish List:</p>
                         {getWishListItems().length > 0 ? (
-                            <div className="grid grid-cols-1 gap-x-8 gap-y-1 max-w-2xl mx-auto px-4">
+                            <div className="grid grid-cols-1 gap-x-8 gap-y-1 max-w-2xl mx-auto px-4 max-h-60 overflow-y-auto">
                                 {getWishListItems().map((item, index) => (
                                     <div key={index} className="flex items-start">
                                         <span className="text-gray-400 mr-2">•</span>
-                                        <span className="whitespace-normal break-all">{item}</span>
+                                        <span className="whitespace-normal break-words">{item}</span>
                                     </div>
                                 ))}
                             </div>
@@ -103,8 +103,8 @@ function WishListDetailModal({ setIsModalOpen, name }) {
                                     key={index}
                                     onClick={() => setCurrentImageIndex(index)}
                                     className={`h-1.5 sm:h-2 rounded-full transition-all
-                                        ${index === currentImageIndex 
-                                            ? 'bg-gray-800 w-4 sm:w-6' 
+                                        ${index === currentImageIndex
+                                            ? 'bg-gray-800 w-4 sm:w-6'
                                             : 'bg-gray-400 w-1.5 sm:w-2 hover:bg-gray-600'
                                         }`}
                                     aria-label={`Go to image ${index + 1}`}
