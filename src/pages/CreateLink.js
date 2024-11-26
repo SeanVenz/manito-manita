@@ -96,6 +96,7 @@ function CreateGift() {
           )}
 
           <p className="text-base mb-0 mt-2 text-red-500 text-center">P.S. You can join lots of Manito-Manita as long as you have the right link!</p>
+          <p className="text-base mb-0 mt-2 text-red-500 text-center">P.P.S. This only works on the browser you opened the link with!</p>
           {error && (
             <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
               <p className="text-red-600 text-center">{error}</p>
