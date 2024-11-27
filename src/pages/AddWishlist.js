@@ -58,9 +58,7 @@ function AddWishlist() {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-red-50 to-white">
-      {/* Form Container */}
       <div className="bg-white shadow-md rounded-lg p-6 max-w-md w-full text-center">
-        {/* View Wishlists Button */}
         <button
           onClick={viewWishLists}
           className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md mb-6 w-full transition duration-150"
@@ -68,12 +66,10 @@ function AddWishlist() {
           View Wishlists
         </button>
 
-        {/* Codename Section */}
         <h2 className="text-lg font-semibold text-gray-800 mb-4">
           Your codename is: <span className="text-xl font-bold text-black">{codeName}</span>
         </h2>
 
-        {/* Wishlist Input */}
         <label htmlFor="wishlist" className="block text-gray-600 text-left mb-2">
           Input your wishlist separated by comma (,) here:
         </label>
@@ -91,7 +87,6 @@ function AddWishlist() {
           </div>
         )}
 
-        {/* File Upload Section */}
         <label htmlFor="file-upload" className="block text-gray-600 text-left mb-2">
           Upload your images:
         </label>
@@ -132,7 +127,6 @@ function AddWishlist() {
           </div>
         )}
 
-        {/* Submit Button */}
         <button
           type="button"
           disabled={isSubmitting}
@@ -142,7 +136,6 @@ function AddWishlist() {
           {isSubmitting ? 'Submitting...' : 'Submit'}
         </button>
 
-        {/* Manito Section */}
         <h2 className="text-lg font-semibold text-gray-800 mt-6 flex items-center justify-center gap-2">
           Your manito is:
           {ismanitoVisible ? (
@@ -181,7 +174,6 @@ function AddWishlist() {
         )}
       </div>
 
-      {/* Modal for Image Deletion */}
       {isModalOpen && (
         <ConfirmationModal
           setIsModalOpen={setIsModalOpen}

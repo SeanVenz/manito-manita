@@ -29,7 +29,6 @@ const useRetrieveNameDetails = (linkId) => {
           setIsLoading(false); 
         });
       } catch (error) {
-        console.error("Error fetching document:", error.message);
         setIsValid(false);
         setIsLoading(false);
       }
@@ -37,7 +36,6 @@ const useRetrieveNameDetails = (linkId) => {
 
     fetchLinkData();
 
-    // Cleanup function
     return () => {
       if (unsubscribe) {
         unsubscribe();

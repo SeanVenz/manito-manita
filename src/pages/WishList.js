@@ -27,14 +27,12 @@ function WishList() {
     setIsModalOpen(true);
   }
 
-  // Filter names based on search query
   const filteredNames = names.filter(name =>
     name.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
       <div className="bg-gradient-to-b from-red-50 to-white py-12 mb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
@@ -46,7 +44,6 @@ function WishList() {
               View the wishlist of your manito here. Make this holiday season special!
             </p>
             
-            {/* Search Bar */}
             <div className="max-w-md mx-auto relative">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -65,7 +62,6 @@ function WishList() {
         </div>
       </div>
 
-      {/* Wishlist Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         {filteredNames.length === 0 ? (
           <div className="text-center py-12">
@@ -80,7 +76,6 @@ function WishList() {
                 className="group bg-white flex flex-col justify-between rounded-xl shadow-sm hover:shadow-md transition-all duration-300 
                           overflow-hidden cursor-pointer border border-gray-100"
               >
-                {/* Card Header */}
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-4">
                     <div>
@@ -100,12 +95,10 @@ function WishList() {
                     />
                   </div>
 
-                  {/* Wishlist Text */}
                   <p className="text-gray-600 mb-4 line-clamp-2">
                     {name.wishList || 'No wishlist provided yet'}
                   </p>
 
-                  {/* Image Preview */}
                   {name.images && name.images.length > 0 && (
                     <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                       {name.images.slice(0, 4).map((url, index) => (
@@ -128,7 +121,6 @@ function WishList() {
                   )}
                 </div>
 
-                {/* Card Footer */}
                 <div className="px-6 py-4 bg-gray-50 group-hover:bg-gray-100 transition-colors">
                   <span className="text-sm text-gray-600 group-hover:text-gray-900">
                     Click to view details
@@ -140,7 +132,6 @@ function WishList() {
         )}
       </div>
 
-      {/* Modal */}
       {isModalOpen && (
         <WishListDetailModal
           setIsModalOpen={setIsModalOpen}

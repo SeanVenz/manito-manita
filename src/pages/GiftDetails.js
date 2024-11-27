@@ -38,7 +38,6 @@ function GiftDetails() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-red-50 to-white py-8 px-4">
       <div className="max-w-2xl mx-auto">
-        {/* Header Section */}
         <div className="text-center mb-8">
           <Gift className="w-16 h-16 text-[#D2042D] mx-auto mb-4" />
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
@@ -51,9 +50,7 @@ function GiftDetails() {
           )}
         </div>
 
-        {/* Main Content Card */}
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-          {/* Error Message */}
           {error && (
             <div className="m-6 flex items-center gap-2 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
               <AlertCircle className="w-5 h-5 flex-shrink-0" />
@@ -62,7 +59,6 @@ function GiftDetails() {
           )}
 
           {selectedName ? (
-            // Selected Name View
             <div className="p-8 text-center">
               <div className="mb-8">
                 <p className="text-gray-600 mb-2">Your nickname is:</p>
@@ -84,7 +80,6 @@ function GiftDetails() {
               <p className="text-base mb-0 mt-4 text-red-500 text-center">P.S. You can join lots of Manito-Manita as long as you have the right link!</p>
             </div>
           ) : (
-            // Name Selection View
             <div className="p-6">
               {availableNames.length > 0 ? (
                 <div className={`grid grid-cols-2 sm:grid-cols-3 gap-3 
@@ -123,7 +118,6 @@ function GiftDetails() {
           )}
         </div>
 
-        {/* View Wishlists Button */}
         <div className="mt-6 text-center">
           <button 
             onClick={viewWishLists}

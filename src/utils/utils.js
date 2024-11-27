@@ -88,7 +88,6 @@ export const handleSubmitWishlist = async (setIsSubmitting, submitWishlist, firs
         setIsSubmitting(false);
         toast.success('Successfully Submitted Wishlist')
     } catch (error) {
-        console.error('Error submitting wishlist:', error);
         setIsSubmitting(false);
     }
 };
@@ -103,7 +102,7 @@ export const handleCopy = (copy) => {
         navigator.clipboard.writeText(copy).then(() => {
             toast.success("Successfully copied link!");
         }).catch(err => {
-            console.error("Failed to copy mnemonic: ", err);
+            toast.error("Something went wrong");
         });
     }
 };
