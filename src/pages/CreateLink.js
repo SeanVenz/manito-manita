@@ -89,7 +89,7 @@ function CreateGift() {
                   onClick={() => createLink(member, setIsLoading, setIsExisting, generateNames, setLinkUrl, setError)}
                   disabled={isLoading || !member}
                 >
-                  {isLoading ? 'Creating...' : 'Generate Secret Santa Links'}
+                  {isLoading ? 'Creating...' : 'Generate Secret Santa Link'}
                 </button>
               )}
             </>
