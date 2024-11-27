@@ -17,10 +17,10 @@ function CreateGift() {
           <Gift className="w-12 h-12 sm:w-16 sm:h-16 text-[#D2042D] mx-auto mb-4 sm:mb-6" />
           <h1 className="text-3xl sm:text-4xl font-bold mb-2 sm:mb-3 text-gray-800">Manito-Manita</h1>
           <p className="text-base sm:text-lg text-gray-600">Create your family & friends gift exchange!</p>
-          <ol className='list-decimal text-red-600 flex flex-col items-center justify-center'>
-            <li className="text-base sm:text-lg text-gray-600 marker:text-red-600">Enter the number of participants and generate a unique sharing link</li>
-            <li className="text-base sm:text-lg text-gray-600 marker:text-red-600">Share the link with friends and select pre-assigned names</li>
-            <li className="text-base sm:text-lg text-gray-600 marker:text-red-600">Upload wishlists with photos and discover who your manito is!</li>
+          <ol className='list-decimal text-red-600 flex flex-col justify-start'>
+            <li className="text-base sm:text-lg text-gray-600 marker:text-red-600 text-left">Enter the number of participants and generate a unique sharing link</li>
+            <li className="text-base sm:text-lg text-gray-600 marker:text-red-600 text-left">Share the link with friends and select pre-assigned names</li>
+            <li className="text-base sm:text-lg text-gray-600 marker:text-red-600 text-left">Upload wishlists with photos and discover who your manito is!</li>
           </ol>
         </div>
 
