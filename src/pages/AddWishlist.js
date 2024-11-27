@@ -146,9 +146,9 @@ function AddWishlist() {
         <h2 className="text-lg font-semibold text-gray-800 mt-6 flex items-center justify-center gap-2">
           Your manito is:
           {ismanitoVisible ? (
-            <span onClick={() => handleManitoVisibility()} className="text-xl font-bold text-black">{manito}</span>
+            <span onClick={() => handleManitoVisibility()} className="text-xl font-bold text-black cursor-pointer">{manito}</span>
           ) : (
-            <span onClick={() => handleManitoVisibility()} className="text-xl font-bold text-black">********</span>
+            <span onClick={() => handleManitoVisibility()} className="text-xl font-bold text-black cursor-pointer">********</span>
           )}
           <button
             onClick={() => handleManitoVisibility()}
