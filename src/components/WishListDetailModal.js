@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import UrlConverter from './UrlConverter';
 
 function WishListDetailModal({ setIsModalOpen, name }) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -43,7 +44,7 @@ function WishListDetailModal({ setIsModalOpen, name }) {
                                 {getWishListItems().map((item, index) => (
                                     <div key={index} className="flex items-start">
                                         <span className="text-gray-400 mr-2">•</span>
-                                        <span className="whitespace-normal break-words">{item}</span>
+                                        <UrlConverter children={item}/>
                                     </div>
                                 ))}
                             </div>
