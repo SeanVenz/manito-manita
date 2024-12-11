@@ -43,7 +43,7 @@ export const assignPairs = (names) => {
 
 export const handleMemberChange = (e, setMember) => {
     const value = e.target.value;
-    if (value === "" || (Number(value) > 0 && Number(value) <= 100)) {
+    if (value === "" || (Number(value) > 0 && Number(value) <= 1000)) {
         setMember(value);
     }
 };
