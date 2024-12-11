@@ -37,7 +37,7 @@ function CreateGift() {
             placeholder="Enter number of participants"
             required
             min="3"
-            max="100"
+            max="1000"
             className="border border-gray-200 p-3 sm:p-4 mb-4 sm:mb-6 w-full rounded-md text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-[#D2042D] focus:border-transparent"
           />
 
