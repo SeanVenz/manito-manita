@@ -126,7 +126,7 @@ function Analytics() {
             },
             title: { 
                 display: true, 
-                text: 'Analytics - Date Range',
+                text: 'Analytics - Number of Links Created',
                 font: {
                     size: 14 
                 }
