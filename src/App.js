@@ -5,6 +5,7 @@ import GiftDetails from './pages/GiftDetails';
 import AddWishlist from './pages/AddWishlist';
 import WishList from './pages/WishList';
 import { ToastContainer } from 'react-toastify';
+import Analytics from './pages/Analytics';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/:linkId" element={<GiftDetails />} />
           <Route path="/:linkId/:nameId" element={<AddWishlist />} />
           <Route path="/:linkId/wishlist" element={<WishList />} />
+          <Route path="/sean/analytics" element={<Analytics />} />
         </Routes>
       </main>
       <ToastContainer
