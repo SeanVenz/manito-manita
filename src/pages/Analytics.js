@@ -101,7 +101,7 @@ function Analytics() {
         }),
         datasets: [
             {
-                label: 'Analytics',
+                label: 'Number of Links',
                 data: processedData.map((item) => item.count),
                 backgroundColor: 'rgba(75, 192, 192, 0.6)',
                 borderColor: 'rgba(75, 192, 192, 1)',
