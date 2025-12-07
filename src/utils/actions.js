@@ -40,8 +40,8 @@ export const submitWishlist = async (firstId, secondId, wishList, images, setUpl
     }
 };
 
-export const createLink = async (member, setIsLoading, setIsExisting, generateNames, setLinkUrl, setError) => {
-    if (!member) return;
+export const createLink = async (member, setIsLoading, setIsExisting, generateNames, setLinkUrl, setError, manualNames = null) => {
+    if (!member && (!manualNames || manualNames.length === 0)) return;
     setIsLoading(true);
     setError('');
 
@@ -96,7 +96,8 @@ export const createLink = async (member, setIsLoading, setIsExisting, generateNa
             linkId = linkRef.id;
             generatedUrl = `${window.location.origin}/${linkId}`;
 
-            const names = generateNames(Number(member));
+            // Use manual names if provided, otherwise generate random names
+            const names = manualNames || generateNames(Number(member));
 
             const pairs = assignPairs(names);
 
@@ -184,7 +185,7 @@ export const deleteImageFromFirebase = async (firstId, secondId, imageUrl) => {
     }
 };
 
-export const deleteLink = async (linkURL, member, setIsLoading, setIsExisting, generateNames, setLinkUrl, setError) => {
+export const deleteLink = async (linkURL, member, setIsLoading, setIsExisting, generateNames, setLinkUrl, setError, manualNames = null) => {
     try {
         setIsLoading(true);
         const urlParts = linkURL.split('/');
@@ -229,7 +230,7 @@ export const deleteLink = async (linkURL, member, setIsLoading, setIsExisting, g
 
             await deleteDoc(linkRef);
 
-            createLink(member, setIsLoading, setIsExisting, generateNames, setLinkUrl, setError);
+            createLink(member, setIsLoading, setIsExisting, generateNames, setLinkUrl, setError, manualNames);
         }
     } catch (err) {
         setIsLoading(false);
