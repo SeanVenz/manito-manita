@@ -1,6 +1,6 @@
 import { deleteObject, getDownloadURL, getStorage, listAll, ref, uploadBytes } from "firebase/storage";
 import { db, storage } from "../firebase";
-import { addDoc, arrayRemove, collection, deleteDoc, doc, getDoc, getDocs, runTransaction, updateDoc, writeBatch } from "firebase/firestore";
+import { addDoc, arrayRemove, collection, deleteDoc, doc, getDoc, getDocs, increment, runTransaction, updateDoc, writeBatch } from "firebase/firestore";
 import { assignPairs } from "./utils";
 import { toast } from "react-toastify";
 
@@ -116,6 +116,7 @@ export const createLink = async (member, setIsLoading, setIsExisting, generateNa
             await batch.commit();
 
             localStorage.setItem('generatedUrl', generatedUrl);
+            localStorage.setItem('isAdmin', linkId);
         }
         setLinkUrl(generatedUrl);
 
@@ -256,5 +257,125 @@ export const confirmDelete = async (imageToDelete, firstId, secondId, setIsModal
         setIsDeleting(false);
     } catch (error) {
         setIsDeleting(false);
+    }
+};
+
+export const addLateParticipant = async (linkId, newName, insertAfterId, setIsAdding) => {
+    try {
+        setIsAdding(true);
+
+        // Get the assignment we're inserting after
+        const insertAfterRef = doc(db, 'links', linkId, 'names', insertAfterId);
+        const insertAfterDoc = await getDoc(insertAfterRef);
+
+        if (!insertAfterDoc.exists()) {
+            toast.error("Assignment not found");
+            setIsAdding(false);
+            return false;
+        }
+
+        const originalRecipient = insertAfterDoc.data().manito;
+
+        // Check if name already exists
+        const namesCollectionRef = collection(db, 'links', linkId, 'names');
+        const existingNames = await getDocs(namesCollectionRef);
+        const nameExists = existingNames.docs.some(
+            doc => doc.data().name.toLowerCase() === newName.toLowerCase()
+        );
+
+        if (nameExists) {
+            toast.error(`"${newName}" already exists in this exchange`);
+            setIsAdding(false);
+            return false;
+        }
+
+        const batch = writeBatch(db);
+
+        // Create new participant document
+        const newParticipantRef = doc(namesCollectionRef);
+        batch.set(newParticipantRef, {
+            name: newName,
+            manito: originalRecipient,
+            created: new Date().toISOString(),
+            isTaken: false
+        });
+
+        // Update the giver to point to new participant
+        batch.update(insertAfterRef, {
+            manito: newName
+        });
+
+        // Update member count
+        const linkRef = doc(db, 'links', linkId);
+        batch.update(linkRef, {
+            member: increment(1)
+        });
+
+        await batch.commit();
+
+        toast.success(`${newName} has been added to the exchange!`);
+        setIsAdding(false);
+        return true;
+
+    } catch (error) {
+        toast.error("Failed to add participant. Please try again.");
+        setIsAdding(false);
+        return false;
+    }
+};
+
+export const swapManitos = async (linkId, personId, newManitoName, allAssignments, setIsSwapping) => {
+    try {
+        setIsSwapping(true);
+
+        // Get the person who wants to swap
+        const personRef = doc(db, 'links', linkId, 'names', personId);
+        const personDoc = await getDoc(personRef);
+
+        if (!personDoc.exists()) {
+            toast.error("Person not found");
+            setIsSwapping(false);
+            return false;
+        }
+
+        const personData = personDoc.data();
+        const oldManito = personData.manito;
+
+        // If same manito selected, do nothing
+        if (oldManito === newManitoName) {
+            setIsSwapping(false);
+            return true;
+        }
+
+        // Find who currently has the newManitoName as their manito
+        const otherPerson = allAssignments.find(a => a.manito === newManitoName);
+
+        if (!otherPerson) {
+            toast.error(`No one is currently assigned to ${newManitoName}`);
+            setIsSwapping(false);
+            return false;
+        }
+
+        const otherPersonRef = doc(db, 'links', linkId, 'names', otherPerson.id);
+
+        // Batch update: swap the manitos
+        const batch = writeBatch(db);
+
+        // Person gets newManitoName
+        batch.update(personRef, { manito: newManitoName });
+
+        // Other person gets person's old manito
+        batch.update(otherPersonRef, { manito: oldManito });
+
+        await batch.commit();
+
+        toast.success(`Swapped! ${personData.name} → ${newManitoName}, ${otherPerson.name} → ${oldManito}`);
+        setIsSwapping(false);
+        return true;
+
+    } catch (error) {
+        toast.error("Failed to swap manitos. Please try again.");
+        setIsSwapping(false);
+        return false;
     }
 };

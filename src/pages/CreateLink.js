@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { generateNames, handleCopy, handleMemberChange } from '../utils/utils';
 import { createLink, deleteLink } from '../utils/actions';
-import { Gift, Users, UserPlus, X } from 'lucide-react';
+import { Gift, Users, UserPlus, X, Settings } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 function CreateGift() {
@@ -238,6 +238,13 @@ function CreateGift() {
                     <i className="bi bi-clipboard text-black"></i>
                     Copy Link
                   </button>
+                  <a
+                    href={`${linkUrl}/manage`}
+                    className="flex items-center justify-center gap-1 font-medium bg-gray-600 text-white py-1 px-3 rounded hover:bg-gray-700 transition duration-300"
+                  >
+                    <Settings className="w-4 h-4" />
+                    Manage
+                  </a>
                 </div>
                 <p className="text-sm sm:text-base text-gray-600 mt-2 sm:mt-3">Would you like to delete and create new? You can only create up to 3 links per day</p>
               </div>
@@ -264,6 +271,13 @@ function CreateGift() {
                       <i className="bi bi-clipboard text-black"></i>
                       Copy Link
                     </button>
+                    <a
+                      href={`${linkUrl}/manage`}
+                      className="flex items-center justify-center gap-1 font-medium bg-gray-600 text-white py-1 px-3 rounded hover:bg-gray-700 transition duration-300"
+                    >
+                      <Settings className="w-4 h-4" />
+                      Manage
+                    </a>
                   </div>
                 </div>
               ) : (
